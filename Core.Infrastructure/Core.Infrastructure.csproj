@@ -23,8 +23,4 @@
     <ProjectReference Include="..\Core.Application\Core.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\Identity\" />
-  </ItemGroup>
-
 </Project>
