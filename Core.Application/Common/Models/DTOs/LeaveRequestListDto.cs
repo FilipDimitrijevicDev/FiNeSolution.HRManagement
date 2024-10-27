@@ -1,4 +1,5 @@
 ﻿using Core.Application.Common.Models.Identity;
+using Core.Domain.Enums;
 
 namespace Core.Application.Common.Models.DTOs;
 
@@ -12,6 +13,5 @@ public class LeaveRequestListDto
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public DateTime DateRequested { get; set; }
-    public bool? Approved { get; set; }
-    public bool? Cancelled { get; set; }
+    public RequestStatus RequestStatus{ get; set; }
 }

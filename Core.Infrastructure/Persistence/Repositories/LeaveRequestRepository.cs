@@ -1,9 +1,8 @@
 ﻿using Core.Application.Common.Identity;
 using Core.Application.Common.Interfaces;
 using Core.Domain;
-using Core.Infrastructure.Identity.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Core.Infrastructure.Persistence.Repositories;
 
@@ -25,11 +24,20 @@ public class LeaveRequestRepository : GenericRepository<LeaveRequest>, ILeaveReq
         return result;
     }
 
-    public async Task<List<LeaveRequest>> GetLeaveRequests(string? searchTerm)
+    public async Task<List<LeaveRequest>> GetLeaveRequests(string? searchTerm, string? sortColumn, string? sortOrder)
     {
         IQueryable<LeaveRequest> requests = _dbContext.LeaveRequests.Include(x => x.LeaveType);
 
         var users = await _userService.GetEmployees();
+
+        if (sortOrder?.ToLower() == "desc")
+        {
+            requests = requests.OrderByDescending(GetSortProperty(sortColumn));
+        }
+        else
+        {
+            requests = requests.OrderBy(GetSortProperty(sortColumn));
+        }
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
@@ -48,7 +56,7 @@ public class LeaveRequestRepository : GenericRepository<LeaveRequest>, ILeaveReq
             }
         }
 
-        return requests.ToList();
+        return await requests.ToListAsync();
     }
 
     public async Task<List<LeaveRequest>> GetLeaveRequestsWithDetails(Guid uid)
@@ -70,4 +78,13 @@ public class LeaveRequestRepository : GenericRepository<LeaveRequest>, ILeaveReq
 
         return result;
     }
+
+    private static Expression<Func<LeaveRequest, object>> GetSortProperty(string? sortColumn) => sortColumn?.ToLower() switch
+    {
+        "startDate" => leaverequest => leaverequest.Duration.Start,
+        "endDate" => leaverequest => leaverequest.Duration.End,
+        "requestStatus" => leaverequest => leaverequest.RequestStatus,
+        "leaveType" => leaverequst => leaverequst.LeaveTypeId,
+        _ => leaverequest => leaverequest.Id
+    };
 }
