@@ -45,7 +45,7 @@ public class GetLeaveRequestsQueryHandler : IRequestHandler<GetLeaveRequestsQuer
         }
         else
         {
-            leaveRequests = await _leaveRequestRepository.GetLeaveRequestsWithDetails();
+            leaveRequests = await _leaveRequestRepository.GetLeaveRequests(request.SearchTerm);
             requests = _mapper.Map<List<LeaveRequestListDto>>(leaveRequests);
             foreach (var req in requests)
             {

@@ -22,9 +22,9 @@ public class CandidatesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<GetAllCandidatesQueryResult> GetAllLeaveTypes()
+    public async Task<GetAllCandidatesQueryResult> GetAllCandidates(string? searchTerm)
     {
-        var candidates = await _mediator.Send(new GetAllCandidatesQuery());
+        var candidates = await _mediator.Send(new GetAllCandidatesQuery(searchTerm));
         return candidates;
     }
 

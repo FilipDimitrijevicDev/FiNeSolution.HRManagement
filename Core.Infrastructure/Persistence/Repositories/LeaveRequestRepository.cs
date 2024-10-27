@@ -1,13 +1,19 @@
-﻿using Core.Application.Common.Interfaces;
+﻿using Core.Application.Common.Identity;
+using Core.Application.Common.Interfaces;
 using Core.Domain;
+using Core.Infrastructure.Identity.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Core.Infrastructure.Persistence.Repositories;
 
 public class LeaveRequestRepository : GenericRepository<LeaveRequest>, ILeaveRequestRepository
 {
-    public LeaveRequestRepository(DatabaseContext.DatabaseContext dbContext) : base(dbContext)
+    private readonly IUserService _userService;
+
+    public LeaveRequestRepository(DatabaseContext.DatabaseContext dbContext, IUserService userService) : base(dbContext)
     {
+        _userService = userService;
     }
 
     public async Task<LeaveRequest> GetLeaveRequestByUid(Guid uid)
@@ -19,14 +25,30 @@ public class LeaveRequestRepository : GenericRepository<LeaveRequest>, ILeaveReq
         return result;
     }
 
-    public async Task<List<LeaveRequest>> GetLeaveRequestsWithDetails()
+    public async Task<List<LeaveRequest>> GetLeaveRequests(string? searchTerm)
     {
-        var result = await _dbContext.LeaveRequests
-            .Where(x => !string.IsNullOrEmpty(x.RequestingEmployeeId))
-            .Include(x => x.LeaveType)
-            .ToListAsync();
+        IQueryable<LeaveRequest> requests = _dbContext.LeaveRequests.Include(x => x.LeaveType);
 
-        return result;
+        var users = await _userService.GetEmployees();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var filteredUsers = users.Where(x =>
+                x.Firstname.Contains(searchTerm) ||
+                x.Lastname.Contains(searchTerm));
+
+            if (filteredUsers.Count() == 0)
+            {
+                return null;
+            }
+
+            foreach (var fusers in filteredUsers)
+            {
+                requests = requests.Where(x => x.RequestingEmployeeId == fusers.Id).AsQueryable();
+            }
+        }
+
+        return requests.ToList();
     }
 
     public async Task<List<LeaveRequest>> GetLeaveRequestsWithDetails(Guid uid)

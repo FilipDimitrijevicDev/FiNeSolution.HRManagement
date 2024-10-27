@@ -24,7 +24,7 @@ public class GetAllCandidatesQueryHandler : IRequestHandler<GetAllCandidatesQuer
 
     public async Task<GetAllCandidatesQueryResult> Handle(GetAllCandidatesQuery request, CancellationToken cancellationToken)
     {
-        var candidates = await _candidateRepository.GetAsync();
+        var candidates = await _candidateRepository.GetFilteredAndPaginatedAsync(request.SearchTerm);
         if (candidates is null) 
         {
             _logger.LogError("Failed to retrieve candidates");
