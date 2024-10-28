@@ -24,7 +24,7 @@ public class LeaveRequestRepository : GenericRepository<LeaveRequest>, ILeaveReq
         return result;
     }
 
-    public async Task<List<LeaveRequest>> GetLeaveRequests(string? searchTerm, string? sortColumn, string? sortOrder)
+    public async Task<List<LeaveRequest>> GetLeaveRequests(string? searchTerm, string? sortColumn, string? sortOrder, int pageNumber, int pageSize)
     {
         IQueryable<LeaveRequest> requests = _dbContext.LeaveRequests.Include(x => x.LeaveType);
 
@@ -56,7 +56,9 @@ public class LeaveRequestRepository : GenericRepository<LeaveRequest>, ILeaveReq
             }
         }
 
-        return await requests.ToListAsync();
+        var result = requests.Skip(pageNumber * pageSize).Take(pageSize).ToListAsync();
+
+        return await result;
     }
 
     public async Task<List<LeaveRequest>> GetLeaveRequestsWithDetails(Guid uid)

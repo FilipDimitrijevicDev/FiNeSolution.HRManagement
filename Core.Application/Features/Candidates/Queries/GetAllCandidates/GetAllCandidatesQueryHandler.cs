@@ -2,6 +2,7 @@
 using Core.Application.Common.Exceptions;
 using Core.Application.Common.Interfaces;
 using Core.Application.Common.Logging;
+using Core.Application.Common.Models;
 using Core.Application.Common.Models.DTOs;
 using MediatR;
 
@@ -22,17 +23,28 @@ public class GetAllCandidatesQueryHandler : IRequestHandler<GetAllCandidatesQuer
         _logger = logger;
     }
 
-    public async Task<GetAllCandidatesQueryResult> Handle(GetAllCandidatesQuery request, CancellationToken cancellationToken)
+    public async Task<GetAllCandidatesQueryResult> Handle(GetAllCandidatesQuery query, CancellationToken cancellationToken)
     {
-        var candidates = await _candidateRepository.GetFilteredAndPaginatedAsync(request.SearchTerm, request.SortColumn, request.SortOrder);
+        var pageNumber = 1;
+        var pageSize = 10;
+        if (query.PageNumber.HasValue && query.PageSize.HasValue)
+        {
+            pageNumber = query.PageNumber.Value;
+            pageSize = query.PageSize.Value;
+        }
+        var candidates = await _candidateRepository.GetFilteredAndPaginatedAsync(
+            query.SearchTerm,
+            query.SortColumn,
+            query.SortOrder,
+            pageNumber,
+            pageSize);
+
         if (candidates is null) 
         {
             _logger.LogError("Failed to retrieve candidates");
-            throw new NotFoundException(nameof(candidates), request);
+            throw new NotFoundException(nameof(candidates), query);
         }
 
-        var result = _mapper.Map<List<CandidateDto>>(candidates);
-
-        return new GetAllCandidatesQueryResult(result);
+        return new GetAllCandidatesQueryResult(candidates);
     }
 }

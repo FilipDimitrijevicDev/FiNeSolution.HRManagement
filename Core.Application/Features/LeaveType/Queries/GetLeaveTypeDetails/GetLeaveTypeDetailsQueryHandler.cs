@@ -22,13 +22,13 @@ public class GetLeaveTypeDetailsQueryHandler : IRequestHandler<GetLeaveTypeDetai
         _logger = logger;
     }
 
-    public async Task<GetLeaveTypeDetailsQueryResult> Handle(GetLeaveTypeDetailsQuery request, CancellationToken cancellationToken)
+    public async Task<GetLeaveTypeDetailsQueryResult> Handle(GetLeaveTypeDetailsQuery query, CancellationToken cancellationToken)
     {
-        var leaveType = await _leaveRequestRepository.GetByUidAsync(request.Uid);
+        var leaveType = await _leaveRequestRepository.GetByUidAsync(query.Uid);
         if (leaveType == null)
         {
-            _logger.LogError("Failed to retrieve leave type: {0}", request.Uid);
-            throw new NotFoundException(nameof(LeaveType), request.Uid);
+            _logger.LogError("Failed to retrieve leave type: {0}", query.Uid);
+            throw new NotFoundException(nameof(LeaveType), query.Uid);
         }
 
         var result = _mapper.Map<LeaveTypeDetailsDto>(leaveType);

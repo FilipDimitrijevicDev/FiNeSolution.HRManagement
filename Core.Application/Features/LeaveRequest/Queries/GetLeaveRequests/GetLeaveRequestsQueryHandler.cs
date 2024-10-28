@@ -22,16 +22,16 @@ public class GetLeaveRequestsQueryHandler : IRequestHandler<GetLeaveRequestsQuer
         _userService = userService;
         _httpContextAccessor = httpContextAccessor;
     }
-    public async Task<GetLeaveRequestsQueryResult> Handle(GetLeaveRequestsQuery request, CancellationToken cancellationToken)
+    public async Task<GetLeaveRequestsQueryResult> Handle(GetLeaveRequestsQuery query, CancellationToken cancellationToken)
     {
         var leaveRequests = new List<Domain.LeaveRequest>();
         var requests = new List<LeaveRequestListDto>();
 
         var role = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
 
-        request.IsLoggedInUser = role == "Employee";  
+        query.IsLoggedInUser = role == "Employee";  
 
-        if (request.IsLoggedInUser)
+        if (query.IsLoggedInUser)
         {
             var userId = _userService.UserId;
             leaveRequests = await _leaveRequestRepository.GetLeaveRequestsWithDetails(userId);
@@ -45,7 +45,15 @@ public class GetLeaveRequestsQueryHandler : IRequestHandler<GetLeaveRequestsQuer
         }
         else
         {
-            leaveRequests = await _leaveRequestRepository.GetLeaveRequests(request.SearchTerm, request.SortColumn, request.SortOrder);
+            var pageNumber = 0;
+            var pageSize = 10;
+            if (query.PageNumber.HasValue && query.PageSize.HasValue)
+            {
+                pageNumber = query.PageNumber.Value;
+                pageSize = query.PageSize.Value;
+            }
+
+            leaveRequests = await _leaveRequestRepository.GetLeaveRequests(query.SearchTerm, query.SortColumn, query.SortOrder, pageNumber, pageSize);
             requests = _mapper.Map<List<LeaveRequestListDto>>(leaveRequests);
             foreach (var req in requests)
             {

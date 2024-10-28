@@ -15,7 +15,7 @@ public class GetLeaveDistributionsQueryHandler : IRequestHandler<GetLeaveDistrib
         _leaveDistributionRepository = leaveDistributionRepository;
         _mapper = mapper;
     }
-    public async Task<GetLeaveDistributionsQueryResult> Handle(GetLeaveDistributionsQuery request, CancellationToken cancellationToken)
+    public async Task<GetLeaveDistributionsQueryResult> Handle(GetLeaveDistributionsQuery query, CancellationToken cancellationToken)
     {
         var leaveDistributions = await _leaveDistributionRepository.GetLeaveDistributionWithDetails();
 

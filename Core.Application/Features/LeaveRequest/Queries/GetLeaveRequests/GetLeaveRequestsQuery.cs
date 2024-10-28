@@ -8,11 +8,20 @@ public class GetLeaveRequestsQuery : IRequest<GetLeaveRequestsQueryResult>
     public string? SearchTerm { get; set; }
     public string? SortColumn { get; set; }
     public string? SortOrder { get; set; }
+    public int? PageNumber { get; set; }
+    public int? PageSize { get; set; }
 
-    public GetLeaveRequestsQuery(string? searchTerm, string? sortColumn, string? sortOrder)
+    public GetLeaveRequestsQuery(
+        string? searchTerm, 
+        string? sortColumn,
+        string? sortOrder,
+        int? pageNumber,
+        int? pageSize)
     {
         SearchTerm = searchTerm;
         SortColumn = sortColumn;
         SortOrder = sortOrder;
+        PageNumber = pageNumber;
+        PageSize = pageSize;
     }
 }

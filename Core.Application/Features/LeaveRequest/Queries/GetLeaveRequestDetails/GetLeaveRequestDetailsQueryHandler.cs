@@ -20,12 +20,12 @@ public class GetLeaveRequestDetailsQueryHandler : IRequestHandler<GetLeaveReques
         _userService = userService;
 
     }
-    public async Task<GetLeaveRequestDetailsQueryResult> Handle(GetLeaveRequestDetailsQuery request, CancellationToken cancellationToken)
+    public async Task<GetLeaveRequestDetailsQueryResult> Handle(GetLeaveRequestDetailsQuery query, CancellationToken cancellationToken)
     {
-        var leaveRequestEntity = await _leaveRequestRepository.GetLeaveRequestsWithDetails(request.Uid);
+        var leaveRequestEntity = await _leaveRequestRepository.GetLeaveRequestsWithDetails(query.Uid);
         if (leaveRequestEntity == null) 
         {
-            throw new NotFoundException(nameof(LeaveRequest), request.Uid);
+            throw new NotFoundException(nameof(LeaveRequest), query.Uid);
         }        
 
         var result = _mapper.Map<List<LeaveRequestDetailsDto>>(leaveRequestEntity);

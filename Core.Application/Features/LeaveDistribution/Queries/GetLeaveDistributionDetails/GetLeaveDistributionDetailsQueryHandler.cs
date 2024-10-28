@@ -18,12 +18,12 @@ public class GetLeaveDistributionDetailsQueryHandler : IRequestHandler<GetLeaveD
         _mapper = mapper;
     }
 
-    public async Task<GetLeaveDistributionDetailsQueryResult> Handle(GetLeaveDistributionDetailsQuery request, CancellationToken cancellationToken)
+    public async Task<GetLeaveDistributionDetailsQueryResult> Handle(GetLeaveDistributionDetailsQuery query, CancellationToken cancellationToken)
     {
-        var leaveDistributionEntity = await _leaveDistributionRepository.GetUserDistributionsByLeaveTypeUid(new Guid(request.EmployeeUid), request.LeaveTypeUid);
+        var leaveDistributionEntity = await _leaveDistributionRepository.GetUserDistributionsByLeaveTypeUid(new Guid(query.EmployeeUid), query.LeaveTypeUid);
         if (leaveDistributionEntity == null) 
         {
-            throw new NotFoundException("leaveDistributionEntity for {0} employee not found.", request.EmployeeUid);
+            throw new NotFoundException("leaveDistributionEntity for {0} employee not found.", query.EmployeeUid);
         }
 
         var leaveDistributions = new List<Core.Domain.LeaveDistribution>

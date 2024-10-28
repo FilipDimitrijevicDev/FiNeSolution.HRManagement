@@ -18,13 +18,13 @@ public class GetCandidateQueryHandler : IRequestHandler<GetCandidateQuery, GetCa
         _mapper = mapper;
         _logger = logger;
     }
-    public async Task<GetCandidateQueryResult> Handle(GetCandidateQuery request, CancellationToken cancellationToken)
+    public async Task<GetCandidateQueryResult> Handle(GetCandidateQuery query, CancellationToken cancellationToken)
     {
-        var candidate = await _candidateRepository.GetByUidAsync(request.Uid);
+        var candidate = await _candidateRepository.GetByUidAsync(query.Uid);
         if (candidate is null) 
         {
             _logger.LogError("Failed to retrieve candidate");
-            throw new NotFoundException(nameof(candidate), request);
+            throw new NotFoundException(nameof(candidate), query);
         }
 
         var result = _mapper.Map<CandidateDto>(candidate);

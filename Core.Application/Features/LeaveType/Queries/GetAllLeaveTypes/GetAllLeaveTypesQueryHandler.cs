@@ -22,13 +22,13 @@ public class GetAllLeaveTypesQueryHandler : IRequestHandler<GetAllLeaveTypesQuer
         _logger = logger;
     }
 
-    public async Task<GetAllLeaveTypesQueryResult> Handle(GetAllLeaveTypesQuery request, CancellationToken cancellationToken)
+    public async Task<GetAllLeaveTypesQueryResult> Handle(GetAllLeaveTypesQuery query, CancellationToken cancellationToken)
     {
         var leaveTypes = await _leaveTypeRepository.GetAsync();
         if (leaveTypes == null)
         {
             _logger.LogError("Failed to retrieve leave types");
-            throw new NotFoundException(nameof(leaveTypes), request);
+            throw new NotFoundException(nameof(leaveTypes), query);
         }
 
         var result = _mapper.Map<List<LeaveTypeDto>>(leaveTypes);

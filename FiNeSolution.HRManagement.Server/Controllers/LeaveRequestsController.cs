@@ -24,9 +24,14 @@ public class LeaveRequestsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<GetLeaveRequestsQueryResult> Get(string? searchTerm, string? sortColumn, string? sortOrder, bool isLoggedInUser = false)
+    public async Task<GetLeaveRequestsQueryResult> Get(string? searchTerm, 
+        string? sortColumn, 
+        string? sortOrder, 
+        int? pageNumber, 
+        int? pageSize, 
+        bool isLoggedInUser = false)
     {
-        var leaveRequests = await _mediator.Send(new GetLeaveRequestsQuery(searchTerm, sortColumn, sortOrder));
+        var leaveRequests = await _mediator.Send(new GetLeaveRequestsQuery(searchTerm, sortColumn, sortOrder, pageNumber, pageSize));
         return leaveRequests;
     }
 

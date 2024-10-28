@@ -5,7 +5,7 @@ namespace Core.Application.Common.Interfaces;
 public interface ILeaveRequestRepository : IGenericRepository<LeaveRequest>
 {
     Task<LeaveRequest> GetLeaveRequestByUid(Guid uid);
-    Task<List<LeaveRequest>> GetLeaveRequests(string? searchTerm, string? sortColumn, string? sortOrder);
+    Task<List<LeaveRequest>> GetLeaveRequests(string? searchTerm, string? sortColumn, string? sortOrder, int pageNumber, int pageSize);
     Task<List<LeaveRequest>> GetLeaveRequestsWithDetails(Guid uid);
     Task<List<LeaveRequest>> GetLeaveRequestsWithDetails(string userUid);
 }

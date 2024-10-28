@@ -1,37 +1,51 @@
-﻿using Core.Application.Common.Interfaces;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Core.Application.Common.Interfaces;
+using Core.Application.Common.Models;
+using Core.Application.Common.Models.DTOs;
 using Core.Domain;
-using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace Core.Infrastructure.Persistence.Repositories;
 
 public class CandidateRepository : GenericRepository<Candidate>, ICandidateRepository
 {
-    public CandidateRepository(DatabaseContext.DatabaseContext dbContext) : base(dbContext)
+    private readonly IMapper _mapper;
+
+    public CandidateRepository(DatabaseContext.DatabaseContext dbContext, IMapper mapper) : base(dbContext)
     {
+        _mapper = mapper;
     }
 
-    public async Task<IReadOnlyCollection<Candidate>> GetFilteredAndPaginatedAsync(string? searchTerm, string? sortColumn, string? sortOrder)
+    public async Task<PagedList<CandidateDto>> GetFilteredAndPaginatedAsync(
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int pageNumber,
+        int pageSize)
     {
-        IQueryable<Candidate> candidates = _dbContext.Candidates;
-
-        if (sortOrder?.ToLower() == "desc")
-        {
-            candidates = candidates.OrderByDescending(GetSortProperty(sortColumn));
-        }
-        else
-        {
-            candidates = candidates.OrderBy(GetSortProperty(sortColumn));
-        }
+        IQueryable<Candidate> query = _dbContext.Candidates;
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            candidates = candidates.Where(c =>
+            query = query.Where(c =>
             c.FirstName.Contains(searchTerm) ||
             c.LastName.Contains(searchTerm)).AsQueryable();
         }
 
-        return await candidates.ToListAsync();
+        if (sortOrder?.ToLower() == "desc")
+        {
+            query = query.OrderByDescending(GetSortProperty(sortColumn));
+        }
+        else
+        {
+            query = query.OrderBy(GetSortProperty(sortColumn));
+        }
+
+        return await PagedList<CandidateDto>.CreateAsync(
+           query.ProjectTo<CandidateDto>(_mapper.ConfigurationProvider),
+           pageNumber,
+           pageSize);
     }
 
     private static Expression<Func<Candidate, object>> GetSortProperty(string? sortColumn) => sortColumn?.ToLower() switch
