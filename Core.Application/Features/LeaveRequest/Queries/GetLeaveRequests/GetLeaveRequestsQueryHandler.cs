@@ -24,43 +24,33 @@ public class GetLeaveRequestsQueryHandler : IRequestHandler<GetLeaveRequestsQuer
     }
     public async Task<GetLeaveRequestsQueryResult> Handle(GetLeaveRequestsQuery query, CancellationToken cancellationToken)
     {
-        var leaveRequests = new List<Domain.LeaveRequest>();
-        var requests = new List<LeaveRequestListDto>();
-
         var role = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
 
-        query.IsLoggedInUser = role == "Employee";  
+        int pageNumber = query.PageNumber ?? 1;
+        int pageSize = query.PageSize ?? 10;
 
-        if (query.IsLoggedInUser)
+        if (query.IsLoggedInUser = role == "Employee")
         {
             var userId = _userService.UserId;
-            leaveRequests = await _leaveRequestRepository.GetLeaveRequestsWithDetails(userId);
+            var leaveRequestsEmployee = await _leaveRequestRepository.GetLeaveRequestsWithDetails(
+                userId,
+                query.SortColumn,
+                query.SortOrder,
+                pageNumber,
+                pageSize);               
 
-            var employee = await _userService.GetEmployee(userId);
-            requests = _mapper.Map<List<LeaveRequestListDto>>(leaveRequests);
-            foreach (var req in requests)
-            {
-                req.Employee = employee;
-            }
+            return new GetLeaveRequestsQueryResult(leaveRequestsEmployee);
         }
         else
         {
-            var pageNumber = 0;
-            var pageSize = 10;
-            if (query.PageNumber.HasValue && query.PageSize.HasValue)
-            {
-                pageNumber = query.PageNumber.Value;
-                pageSize = query.PageSize.Value;
-            }
+            var leaveRequestsDto = await _leaveRequestRepository.GetLeaveRequests(
+                query.SearchTerm,
+                query.SortColumn,
+                query.SortOrder,
+                pageNumber,
+                pageSize);
 
-            leaveRequests = await _leaveRequestRepository.GetLeaveRequests(query.SearchTerm, query.SortColumn, query.SortOrder, pageNumber, pageSize);
-            requests = _mapper.Map<List<LeaveRequestListDto>>(leaveRequests);
-            foreach (var req in requests)
-            {
-                req.Employee = await _userService.GetEmployee(req.RequestingEmployeeId);
-            }
-        }
-
-        return new GetLeaveRequestsQueryResult(requests);
+            return new GetLeaveRequestsQueryResult(leaveRequestsDto);
+        }        
     }
 }

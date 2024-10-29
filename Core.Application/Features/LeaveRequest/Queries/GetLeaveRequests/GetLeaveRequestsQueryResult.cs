@@ -1,12 +1,13 @@
-﻿using Core.Application.Common.Models.DTOs;
+﻿using Core.Application.Common.Models;
+using Core.Application.Common.Models.DTOs;
 
 namespace Core.Application.Features.LeaveRequest.Queries.GetLeaveRequests;
 
 public class GetLeaveRequestsQueryResult
 {
-    public List<LeaveRequestListDto> LeaveRequestListDto { get; set; }
+    public PagedList<LeaveRequestListDto> LeaveRequestListDto { get; set; }
 
-    public GetLeaveRequestsQueryResult(List<LeaveRequestListDto> leaveRequestListDto)
+    public GetLeaveRequestsQueryResult(PagedList<LeaveRequestListDto> leaveRequestListDto)
     {
         LeaveRequestListDto = leaveRequestListDto;
     }

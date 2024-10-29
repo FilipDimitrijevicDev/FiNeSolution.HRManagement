@@ -25,13 +25,9 @@ public class GetAllCandidatesQueryHandler : IRequestHandler<GetAllCandidatesQuer
 
     public async Task<GetAllCandidatesQueryResult> Handle(GetAllCandidatesQuery query, CancellationToken cancellationToken)
     {
-        var pageNumber = 1;
-        var pageSize = 10;
-        if (query.PageNumber.HasValue && query.PageSize.HasValue)
-        {
-            pageNumber = query.PageNumber.Value;
-            pageSize = query.PageSize.Value;
-        }
+        int pageNumber = query.PageNumber ?? 0;
+        int pageSize = query.PageSize ?? 10;
+
         var candidates = await _candidateRepository.GetFilteredAndPaginatedAsync(
             query.SearchTerm,
             query.SortColumn,
