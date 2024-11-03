@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Core.Application.Common.Identity;
 using Core.Application.Common.Interfaces;
 using Core.Application.Common.Models;
 using Core.Application.Common.Models.DTOs;
@@ -11,17 +10,15 @@ namespace Core.Infrastructure.Persistence.Repositories;
 
 public class LeaveRequestRepository : GenericRepository<Domain.LeaveRequest>, ILeaveRequestRepository
 {
-    private readonly IUserService _userService;
     private readonly IMapper _mapper;
 
-    public LeaveRequestRepository(DatabaseContext.DatabaseContext dbContext, IUserService userService, IMapper mapper) : base(dbContext)
+    public LeaveRequestRepository(DatabaseContext.DatabaseContext dbContext, IMapper mapper) : base(dbContext)
     {
-        _userService = userService;
         _mapper = mapper;
     }
 
     public async Task<PagedList<LeaveRequestListDto>> GetLeaveRequests(
-        string? searchTerm,
+        List<string> filteredUsersIds,
         string? sortColumn,
         string? sortOrder,
         int pageNumber,
@@ -29,23 +26,10 @@ public class LeaveRequestRepository : GenericRepository<Domain.LeaveRequest>, IL
     {
         IQueryable<Domain.LeaveRequest> query = _dbContext.LeaveRequests.Include(x => x.LeaveType);
 
-        var employees = await _userService.GetEmployees();
-
         query = SortAndOrder(sortColumn, sortOrder, query);
 
-        if (!string.IsNullOrWhiteSpace(searchTerm))
+        if (filteredUsersIds != null && filteredUsersIds.Count != 0)
         {
-            var filteredUsersIds = employees.Where(x =>
-                x.Firstname.Contains(searchTerm) ||
-                x.Lastname.Contains(searchTerm))
-                .Select(x => x.Id)
-                .ToList();
-
-            if (filteredUsersIds.Count == 0)
-            {
-                return null;
-            }
-
             query = query.Where(lr => filteredUsersIds.Contains(lr.RequestingEmployeeId));
         }
 
@@ -53,11 +37,6 @@ public class LeaveRequestRepository : GenericRepository<Domain.LeaveRequest>, IL
             query.ProjectTo<LeaveRequestListDto>(_mapper.ConfigurationProvider),
             pageNumber,
             pageSize);
-
-        foreach (var request in result.Items)
-        {
-            request.Employee = employees.FirstOrDefault(user => user.Id == request.RequestingEmployeeId);
-        }
 
         return result;
     }
@@ -78,13 +57,6 @@ public class LeaveRequestRepository : GenericRepository<Domain.LeaveRequest>, IL
         var result = await PagedList<LeaveRequestListDto>.CreateAsync(
             query.ProjectTo<LeaveRequestListDto>(_mapper.ConfigurationProvider),
             pageNumber, pageSize);
-
-        var employee = await _userService.GetEmployee(uid);
-
-        foreach (var request in result.Items)
-        {
-            request.Employee = employee;
-        }
 
         return result;
     }
@@ -110,7 +82,6 @@ public class LeaveRequestRepository : GenericRepository<Domain.LeaveRequest>, IL
 
         return query;
     }
-
     private static Expression<Func<Domain.LeaveRequest, object>> GetSortProperty(string? sortColumn) => sortColumn?.ToLower() switch
     {
         "startDate" => leaverequest => leaverequest.Duration.Start,

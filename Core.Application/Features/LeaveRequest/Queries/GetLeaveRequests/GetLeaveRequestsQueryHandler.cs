@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Core.Application.Common.Identity;
 using Core.Application.Common.Interfaces;
-using Core.Application.Common.Models.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
@@ -15,10 +14,10 @@ public class GetLeaveRequestsQueryHandler : IRequestHandler<GetLeaveRequestsQuer
     private readonly IUserService _userService;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public GetLeaveRequestsQueryHandler(ILeaveRequestRepository leaveRequestRepository, IMapper mapper, IUserService userService, IHttpContextAccessor httpContextAccessor) 
+    public GetLeaveRequestsQueryHandler(ILeaveRequestRepository leaveRequestRepository, IMapper mapper, IUserService userService, IHttpContextAccessor httpContextAccessor)
     {
         _leaveRequestRepository = leaveRequestRepository;
-        _mapper = mapper;   
+        _mapper = mapper;
         _userService = userService;
         _httpContextAccessor = httpContextAccessor;
     }
@@ -37,20 +36,50 @@ public class GetLeaveRequestsQueryHandler : IRequestHandler<GetLeaveRequestsQuer
                 query.SortColumn,
                 query.SortOrder,
                 pageNumber,
-                pageSize);               
+                pageSize);
+
+            var employee = await _userService.GetEmployee(userId);
+
+            foreach (var leaveRequest in leaveRequestsEmployee.Items)
+            {
+                leaveRequest.Employee = employee;
+            }
 
             return new GetLeaveRequestsQueryResult(leaveRequestsEmployee);
         }
         else
         {
+            var employees = await _userService.GetEmployees();
+
+            var filteredUsersIds = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(query.SearchTerm))
+            {
+                filteredUsersIds = employees.Where(x =>
+                    x.Firstname.Contains(query.SearchTerm) ||
+                    x.Lastname.Contains(query.SearchTerm))
+                    .Select(x => x.Id)
+                    .ToList();
+
+                if (filteredUsersIds.Count == 0)
+                {
+                    return null;
+                }
+            }
+
             var leaveRequestsDto = await _leaveRequestRepository.GetLeaveRequests(
-                query.SearchTerm,
-                query.SortColumn,
-                query.SortOrder,
-                pageNumber,
-                pageSize);
+            filteredUsersIds,
+            query.SortColumn,
+            query.SortOrder,
+            pageNumber,
+            pageSize);
+
+            foreach (var request in leaveRequestsDto.Items)
+            {
+                request.Employee = employees.FirstOrDefault(user => user.Id == request.RequestingEmployeeId);
+            }
 
             return new GetLeaveRequestsQueryResult(leaveRequestsDto);
-        }        
+        }
     }
 }
