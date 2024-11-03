@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core.Application.Common.Identity;
 using Core.Application.Common.Interfaces;
+using Core.Domain.Constants;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
@@ -28,7 +29,7 @@ public class GetLeaveRequestsQueryHandler : IRequestHandler<GetLeaveRequestsQuer
         int pageNumber = query.PageNumber ?? 1;
         int pageSize = query.PageSize ?? 10;
 
-        if (query.IsLoggedInUser = role == "Employee")
+        if (query.IsLoggedInUser = role == BaseConstants.RoleEmployee)
         {
             var userId = _userService.UserId;
             var leaveRequestsEmployee = await _leaveRequestRepository.GetLeaveRequestsWithDetails(

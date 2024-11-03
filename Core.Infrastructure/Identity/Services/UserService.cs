@@ -1,5 +1,6 @@
 ﻿using Core.Application.Common.Identity;
 using Core.Application.Common.Models.Identity;
+using Core.Domain.Constants;
 using Core.Infrastructure.Identity.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -33,7 +34,7 @@ public class UserService : IUserService
 
     public async Task<List<Employee>> GetEmployees()
     {
-        var employees = await _userManager.GetUsersInRoleAsync("Employee");
+        var employees = await _userManager.GetUsersInRoleAsync(BaseConstants.RoleEmployee);
         return employees.Select(q => new Employee
         {
             Id = q.Id,

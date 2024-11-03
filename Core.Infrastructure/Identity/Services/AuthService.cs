@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Core.Domain.Constants;
 
 namespace Core.Infrastructure.Identity.Services;
 
@@ -69,7 +70,7 @@ public class AuthService : IAuthService
 
         if (result.Succeeded)
         {
-            await _userManager.AddToRoleAsync(user, "Employee");
+            await _userManager.AddToRoleAsync(user, BaseConstants.RoleEmployee);
             return new RegistrationResponse() { UserId = user.Id };
         }
         else
