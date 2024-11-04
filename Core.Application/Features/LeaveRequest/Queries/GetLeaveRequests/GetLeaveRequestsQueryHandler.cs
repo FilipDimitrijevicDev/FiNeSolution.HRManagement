@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Core.Application.Common.Identity;
 using Core.Application.Common.Interfaces;
+using Core.Application.Common.Models.DTOs;
+using Core.Application.Common.Models;
 using Core.Domain.Constants;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -64,7 +66,7 @@ public class GetLeaveRequestsQueryHandler : IRequestHandler<GetLeaveRequestsQuer
 
                 if (filteredUsersIds.Count == 0)
                 {
-                    return null;
+                    return new GetLeaveRequestsQueryResult(PagedList<LeaveRequestListDto>.Empty(pageNumber, pageSize));
                 }
             }
 

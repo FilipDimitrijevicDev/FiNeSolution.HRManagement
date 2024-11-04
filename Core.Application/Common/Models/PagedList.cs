@@ -26,4 +26,9 @@ public class PagedList<T>
 
         return new(items, page, pageSize, totalCount);
     }
+
+    public static PagedList<T> Empty(int page, int pageSize)
+    {
+        return new PagedList<T>([], page, pageSize, 0);
+    }
 }
