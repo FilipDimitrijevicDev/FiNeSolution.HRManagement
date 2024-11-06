@@ -17,7 +17,11 @@ public class GetLeaveRequestsQueryHandler : IRequestHandler<GetLeaveRequestsQuer
     private readonly IUserService _userService;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public GetLeaveRequestsQueryHandler(ILeaveRequestRepository leaveRequestRepository, IMapper mapper, IUserService userService, IHttpContextAccessor httpContextAccessor)
+    public GetLeaveRequestsQueryHandler(
+        ILeaveRequestRepository leaveRequestRepository,
+        IMapper mapper,
+        IUserService userService,
+        IHttpContextAccessor httpContextAccessor)
     {
         _leaveRequestRepository = leaveRequestRepository;
         _mapper = mapper;

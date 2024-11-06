@@ -3,10 +3,13 @@ using Core.Application.Common.Email;
 using Core.Application.Common.Exceptions;
 using Core.Application.Common.Identity;
 using Core.Application.Common.Interfaces;
-using Core.Application.Common.Models;
+using Core.Application.Common.Logging;
 using Core.Domain.Common;
 using Core.Domain.Constants;
 using MediatR;
+using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace Core.Application.Features.LeaveRequest.Commands.CreateLeaveRequest;
 
@@ -19,14 +22,19 @@ public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveReque
     private readonly IUserService _userService;
     private readonly IEmailSender _emailSender;
     private readonly ILocalizationService _localizationService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ILogger<CreateLeaveRequestCommandHandler> _logger;
+
     public CreateLeaveRequestCommandHandler(
         IMapper mapper,
-        ILeaveTypeRepository leaveTypeRepository, 
+        ILeaveTypeRepository leaveTypeRepository,
         ILeaveRequestRepository leaveRequestRepository,
         ILeaveDistributionRepository leaveDistributionRepository,
         IUserService userService,
         IEmailSender emailSender,
-        ILocalizationService localizationService)
+        ILocalizationService localizationService,
+        IHttpContextAccessor httpContextAccessor,
+        ILogger<CreateLeaveRequestCommandHandler> logger)
     {
         _leaveDistributionRepository = leaveDistributionRepository;
         _userService = userService;
@@ -35,29 +43,31 @@ public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveReque
         _leaveRequestRepository = leaveRequestRepository;
         _emailSender = emailSender;
         _localizationService = localizationService;
+        _httpContextAccessor = httpContextAccessor;
+        _logger = logger;
     }
     public async Task<CreateLeaveRequestCommandResult> Handle(CreateLeaveRequestCommand request, CancellationToken cancellationToken)
     {
-        var employeeId = _userService.UserId;
-        if (employeeId is null)
+        var role = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+
+        var employeeId = role == BaseConstants.RoleEmployee ? _userService.UserId : request.EmployeeUid.ToString();
+        if (!Guid.TryParse(employeeId, out var employeeGuid))
         {
-            employeeId = "2499bc5a-0f33-4f67-b521-5829679ee7ff";
+            throw new ValidationException("Invalid employee ID format.");
         }
 
-        var distribution = await _leaveDistributionRepository.GetUserDistributionsByLeaveTypeUid(new Guid(employeeId), request.LeaveTypeUid);
+        var distribution = await _leaveDistributionRepository.GetUserDistributionsByLeaveTypeUid(employeeGuid, request.LeaveTypeUid);
 
-        // if distributions aren't enough, return validation error with message
         if (distribution is null)
         {
-            // TODO:
-            throw new NotFoundException(nameof(LeaveDistribution), new Guid(employeeId));
+            _logger.LogError($"Failed to found assigned leave for leaveTypeUid: {request.LeaveTypeUid} and for employeeUid: {employeeGuid}");
+            throw new NotFoundException(nameof(LeaveDistribution), employeeGuid);
         }
 
         var duration = DateRange.Create(request.StartDate, request.EndDate);
 
         if (duration.LengthInDays > distribution.RemainingDays)
-        {
-            // TODO:
+        {            
             throw new BadRequestException("You do not have enough available days for this type of leave.");
         }
 
@@ -67,7 +77,7 @@ public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveReque
             Duration = duration,
             LeaveTypeId = distribution.LeaveTypeId,
             RequestComments = request.RequestComments,
-            RequestStatus = Domain.Enums.RequestStatus.Pending            
+            RequestStatus = Domain.Enums.RequestStatus.Pending
         };
 
         var leaveRequestEntity = _mapper.Map<Domain.LeaveRequest>(leaveRequest);
