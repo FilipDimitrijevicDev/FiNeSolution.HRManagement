@@ -4,5 +4,6 @@ namespace Core.Application.Features.LeaveDistribution.Commands.CreateLeaveDistri
 
 public class CreateLeaveDistributionCommand : IRequest<CreateLeaveDistributionCommandResult>
 {
+    public Guid? EmployeeGuid { get; set; }
     public Guid LeaveTypeUid { get; set; }
 }

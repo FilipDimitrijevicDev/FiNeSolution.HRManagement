@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Core.Application.Common.Email;
 using Core.Application.Common.Logging;
 using Core.Infrastructure.Services;
+using Core.Application.Common.Clock;
+using Core.Infrastructure.Common.Clock;
 
 namespace Core.Infrastructure.Persistence;
 
@@ -28,6 +30,7 @@ public static class InfrastructureServicesRegistration
 
         services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
         services.AddTransient<IEmailSender, EmailSender>();
+        services.AddTransient<IDateTimeProvider, DateTimeProvider>();
 
         services.AddSingleton<ILocalizationService, BaseLocalizationService>();
 

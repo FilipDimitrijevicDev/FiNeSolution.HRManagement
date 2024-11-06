@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using Core.Application.Common.Clock;
 using Core.Application.Common.Exceptions;
 using Core.Application.Common.Identity;
 using Core.Application.Common.Interfaces;
 using Core.Application.Common.Logging;
+using Core.Application.Common.Models.Identity;
 using Core.Domain.Constants;
 using MediatR;
 
@@ -15,6 +17,7 @@ public class CreateLeaveDistributionCommandHandler : IRequestHandler<CreateLeave
     private readonly ILeaveTypeRepository _leaveTypeRepository;
     private readonly IUserService _userService;
     private readonly ILocalizationService _localizationService;
+    private readonly IDateTimeProvider _dateTimeProvider;
     private readonly ILogger<CreateLeaveDistributionCommandHandler> _logger;
 
     public CreateLeaveDistributionCommandHandler(
@@ -23,6 +26,7 @@ public class CreateLeaveDistributionCommandHandler : IRequestHandler<CreateLeave
         ILeaveTypeRepository leaveTypeRepository, 
         IUserService userService, 
         ILocalizationService localizationService,
+        IDateTimeProvider dateProvider,
         ILogger<CreateLeaveDistributionCommandHandler> logger)
     {
         _leaveDistributionRepository = leaveDistributionRepository;
@@ -31,6 +35,7 @@ public class CreateLeaveDistributionCommandHandler : IRequestHandler<CreateLeave
         _userService = userService;
         _localizationService = localizationService;
         _logger = logger;
+        _dateTimeProvider = dateProvider;
     }
 
     public async Task<CreateLeaveDistributionCommandResult> Handle(CreateLeaveDistributionCommand request, CancellationToken cancellationToken)
@@ -42,10 +47,22 @@ public class CreateLeaveDistributionCommandHandler : IRequestHandler<CreateLeave
             throw new NotFoundException(nameof(LeaveType), request.LeaveTypeUid);
         }
 
-        var employees = await _userService.GetEmployees();
+        var employees = new List<Employee>();
 
-        // TODO: Check for Clock service
-        var period = DateTime.UtcNow.Year;
+        if (request.EmployeeGuid == null)
+        {
+            employees = await _userService.GetEmployees();
+        }
+        else 
+        {
+            var employee = await _userService.GetEmployee(request.EmployeeGuid.Value.ToString());
+            if (employee != null)
+            {
+                employees.Add(employee);
+            }
+        }
+
+        var period = _dateTimeProvider.UtcNow.Year;
 
         var distribution = new List<Domain.LeaveDistribution>();
         foreach (var emp in employees)
@@ -65,7 +82,7 @@ public class CreateLeaveDistributionCommandHandler : IRequestHandler<CreateLeave
             }
         }
 
-        if (distribution.Any())
+        if (distribution.Count != 0)
         {
             await _leaveDistributionRepository.AddDistribution(distribution);
         }
