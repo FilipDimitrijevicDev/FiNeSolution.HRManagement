@@ -58,12 +58,12 @@ public class AuthService : IAuthService
         var user = new ApplicationUser
         {
             Email = request.Email,
-            FirstName = request.FirstName,
-            LastName = request.LastName,
+            //FirstName = request.FirstName,
+            //LastName = request.LastName,
             UserName = request.UserName,
             EmailConfirmed = true,
-            CompanyName = request.CompanyName,
-            DateOfBirth = request.DateOfBirth
+            //CompanyName = request.CompanyName,
+            //DateOfBirth = request.DateOfBirth
         };
 
         var result = await _userManager.CreateAsync(user, request.Password);

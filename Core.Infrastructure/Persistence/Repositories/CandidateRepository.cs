@@ -4,6 +4,7 @@ using Core.Application.Common.Interfaces;
 using Core.Application.Common.Models;
 using Core.Application.Common.Models.DTOs;
 using Core.Domain;
+using Core.Infrastructure.Persistence.DatabaseContext;
 using System.Linq.Expressions;
 
 namespace Core.Infrastructure.Persistence.Repositories;
@@ -12,7 +13,7 @@ public class CandidateRepository : GenericRepository<Candidate>, ICandidateRepos
 {
     private readonly IMapper _mapper;
 
-    public CandidateRepository(DatabaseContext.DatabaseContext dbContext, IMapper mapper) : base(dbContext)
+    public CandidateRepository(CoreDbContext dbContext, IMapper mapper) : base(dbContext)
     {
         _mapper = mapper;
     }

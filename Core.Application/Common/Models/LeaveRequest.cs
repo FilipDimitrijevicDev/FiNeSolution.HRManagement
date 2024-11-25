@@ -12,6 +12,7 @@ public class LeaveRequest
     public int LeaveTypeId { get; set; }
     public LeaveTypeDto LeaveType { get; set; }
     public DateTime DateRequested { get; set; }
-    public string RequestComments { get; set; }
+    public string? RequestComments { get; set; }
     public RequestStatus RequestStatus { get; set; }
+    public bool ReserveOnly { get; set; }
 }

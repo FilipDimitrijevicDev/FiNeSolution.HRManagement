@@ -22,212 +22,6 @@ namespace Core.Infrastructure.Migrations.IdentityDb
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Core.Domain.Candidate", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CVPath")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateOnly>("DateOfBirth")
-                        .HasColumnType("date");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Seniority")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StackPosition")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("Uid")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Candidate");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CVPath = "/uploads/john_doe_cv.pdf",
-                            CreatedDate = new DateTime(2024, 10, 23, 18, 6, 33, 405, DateTimeKind.Utc).AddTicks(3605),
-                            DateOfBirth = new DateOnly(1990, 5, 15),
-                            Email = "john.doe@example.com",
-                            FirstName = "John",
-                            LastName = "Doe",
-                            Note = "Candidate shows strong skills in backend development.",
-                            Rating = 4,
-                            Seniority = 3,
-                            StackPosition = 1,
-                            Uid = new Guid("3402484c-8383-48ff-a35e-ca4df1995a35")
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CVPath = "/uploads/alice_smith_cv.pdf",
-                            CreatedDate = new DateTime(2024, 10, 23, 18, 6, 33, 405, DateTimeKind.Utc).AddTicks(3664),
-                            DateOfBirth = new DateOnly(1985, 12, 30),
-                            Email = "alice.smith@example.com",
-                            FirstName = "Alice",
-                            LastName = "Smith",
-                            Note = "Experienced project manager with a strong background in Agile methodologies.",
-                            Rating = 5,
-                            Seniority = 3,
-                            StackPosition = 2,
-                            Uid = new Guid("2c7939a3-1a4c-4fe9-9eda-90ffda2009c1")
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CVPath = "/uploads/michael_johnson_cv.pdf",
-                            CreatedDate = new DateTime(2024, 10, 23, 18, 6, 33, 405, DateTimeKind.Utc).AddTicks(3681),
-                            DateOfBirth = new DateOnly(1992, 4, 10),
-                            Email = "michael.johnson@example.com",
-                            FirstName = "Michael",
-                            LastName = "Johnson",
-                            Note = "Front-end developer with expertise in React and Vue.js.",
-                            Rating = 3,
-                            Seniority = 1,
-                            StackPosition = 0,
-                            Uid = new Guid("5d65be7b-c223-48c2-a9d4-49e140def2b6")
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CVPath = "/uploads/emma_williams_cv.pdf",
-                            CreatedDate = new DateTime(2024, 10, 23, 18, 6, 33, 405, DateTimeKind.Utc).AddTicks(3686),
-                            DateOfBirth = new DateOnly(1988, 8, 25),
-                            Email = "emma.williams@example.com",
-                            FirstName = "Emma",
-                            LastName = "Williams",
-                            Note = "Full-stack developer with strong skills in Node.js and .NET Core.",
-                            Rating = 4,
-                            Seniority = 1,
-                            StackPosition = 2,
-                            Uid = new Guid("eb619ca0-0cc3-46ee-b52a-faa88b9f6b17")
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CVPath = "/uploads/david_brown_cv.pdf",
-                            CreatedDate = new DateTime(2024, 10, 23, 18, 6, 33, 405, DateTimeKind.Utc).AddTicks(3700),
-                            DateOfBirth = new DateOnly(1995, 11, 15),
-                            Email = "david.brown@example.com",
-                            FirstName = "David",
-                            LastName = "Brown",
-                            Note = "DevOps engineer with experience in CI/CD pipelines and containerization.",
-                            Rating = 5,
-                            Seniority = 2,
-                            StackPosition = 4,
-                            Uid = new Guid("81d41adc-6b3f-4b4b-a1fd-cef466b0f8e1")
-                        });
-                });
-
-            modelBuilder.Entity("Core.Domain.LeaveType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DefaultDays")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<bool>("RequiresHRApproval")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("Uid")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LeaveType");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedDate = new DateTime(2024, 10, 23, 20, 6, 33, 406, DateTimeKind.Local).AddTicks(4173),
-                            DefaultDays = 21,
-                            Name = "Vacation",
-                            RequiresHRApproval = true,
-                            Uid = new Guid("c13d5926-2d3d-4f95-a90e-728914094c9a")
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedDate = new DateTime(2024, 10, 23, 20, 6, 33, 406, DateTimeKind.Local).AddTicks(4334),
-                            DefaultDays = 15,
-                            Name = "Old Vacation",
-                            RequiresHRApproval = true,
-                            Uid = new Guid("c9edbebf-6ece-4c95-85c5-dc4324fb624e")
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedDate = new DateTime(2024, 10, 23, 20, 6, 33, 406, DateTimeKind.Local).AddTicks(4337),
-                            DefaultDays = 15,
-                            Name = "Remote Work",
-                            RequiresHRApproval = true,
-                            Uid = new Guid("2c4fb57a-8fc6-42c7-9000-f0d827f273a0")
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CreatedDate = new DateTime(2024, 10, 23, 20, 6, 33, 406, DateTimeKind.Local).AddTicks(4339),
-                            DefaultDays = 365,
-                            Name = "Sick Leave",
-                            RequiresHRApproval = false,
-                            Uid = new Guid("58d21e95-9478-4732-a973-3ab477500818")
-                        });
-                });
-
             modelBuilder.Entity("Core.Infrastructure.Identity.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -236,16 +30,9 @@ namespace Core.Infrastructure.Migrations.IdentityDb
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("CompanyName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly>("DateOfBirth")
-                        .HasColumnType("date");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -253,14 +40,6 @@ namespace Core.Infrastructure.Migrations.IdentityDb
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -312,19 +91,15 @@ namespace Core.Infrastructure.Migrations.IdentityDb
                         {
                             Id = "42df1250-85ef-4683-9046-6f2e5405ee3a",
                             AccessFailedCount = 0,
-                            CompanyName = "System",
-                            ConcurrencyStamp = "01133198-250b-4ba9-bf9e-6e65f58b987a",
-                            DateOfBirth = new DateOnly(1995, 1, 14),
+                            ConcurrencyStamp = "e4e058bc-4223-45ee-9982-be0786bca5d2",
                             Email = "admin@localhost.com",
                             EmailConfirmed = true,
-                            FirstName = "System",
-                            LastName = "Admin",
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEIzlmTaiZXls81f7x+aePMkDL2yDBWuQNoc/nbQxN6/obLZH82cr53CthESaHHosgw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAED+YZuc/3H4sib4v1ITXTs8j+dXbhiakkJgEvaChASaHawCb0s1YUZdOUNLw98Kf+Q==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "7f7e3680-ed8c-484f-a77a-1624571d0d0f",
+                            SecurityStamp = "b296f64e-bb37-4b00-aefd-c7fbf310c0e6",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         },
@@ -332,61 +107,97 @@ namespace Core.Infrastructure.Migrations.IdentityDb
                         {
                             Id = "48a3b0de-d24d-4879-a528-ddaf38580270",
                             AccessFailedCount = 0,
-                            CompanyName = "System",
-                            ConcurrencyStamp = "e21d5737-fced-4aaa-96ed-28f7c931c6db",
-                            DateOfBirth = new DateOnly(1995, 1, 14),
-                            Email = "companyadmin@localhost.com",
+                            ConcurrencyStamp = "bfb9a6a0-ebeb-4132-81f4-1a367df4c5de",
+                            Email = "naissuscompanyadmin@localhost.com",
                             EmailConfirmed = true,
-                            FirstName = "Company",
-                            LastName = "Admin",
                             LockoutEnabled = false,
-                            NormalizedEmail = "COMPANYADMIN@LOCALHOST.COM",
-                            NormalizedUserName = "COMPANYADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBrAXDJ8xDY8DETzxlLIXopp4lYeSwGifs/OGHfubczaF0+eSEodh1ws+ff1MplXMg==",
+                            NormalizedEmail = "NAISSUSCOMPANYADMIN@LOCALHOST.COM",
+                            NormalizedUserName = "NAISSUSCOMPANYADMIN@LOCALHOST.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEN63iXou6lRrv9XzbguIsI1SpgyEBe3wJU6W10bIJD6uBgBeR8l0tq5N0P4OC9OSnw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "c8a0a664-e4d3-4334-83ff-75b4a2c82cb4",
+                            SecurityStamp = "27ef1998-f42b-48d8-b8c4-a47ee2aff8ba",
                             TwoFactorEnabled = false,
-                            UserName = "companyadmin@localhost.com"
+                            UserName = "naissuscompanyadmin@localhost.com"
                         },
                         new
                         {
                             Id = "2499bc5a-0f33-4f67-b521-5829679ee7ff",
                             AccessFailedCount = 0,
-                            CompanyName = "System",
-                            ConcurrencyStamp = "e049fc8f-ffef-470f-9622-610835b7d0b4",
-                            DateOfBirth = new DateOnly(1995, 1, 14),
-                            Email = "user@localhost.com",
+                            ConcurrencyStamp = "512cf4b6-4b5f-4bb7-9ab4-ee719786fd8f",
+                            Email = "filip.dimitrijevic@localhost.com",
                             EmailConfirmed = true,
-                            FirstName = "System",
-                            LastName = "User",
                             LockoutEnabled = false,
-                            NormalizedEmail = "USER@LOCALHOST.COM",
-                            NormalizedUserName = "USER@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEIt4TFDYLGhMXk9b3WnFofTb5BCi7zJ4zFLcXREQnll0HNOGBAfT8FPXSfQQryDmtw==",
+                            NormalizedEmail = "FILIP.DIMITRIJEVIC@LOCALHOST.COM",
+                            NormalizedUserName = "FILIP.DIMITRIJEVIC@LOCALHOST.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEApcdI06Zv75TOdd5DSjgd/P4rjVIP/MnQJlnBGHwLfxoPiJ4kCA4myxl3vNPPdvoA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "9014f7a6-6007-429b-ae5f-66831c18740d",
+                            SecurityStamp = "452fc2eb-c0ba-419d-9995-6aed57a38b55",
                             TwoFactorEnabled = false,
-                            UserName = "user@localhost.com"
+                            UserName = "filip.dimitrijevic@localhost.com"
                         },
                         new
                         {
                             Id = "306627f3-c902-4d48-a6f3-d83db48df2c6",
                             AccessFailedCount = 0,
-                            CompanyName = "System",
-                            ConcurrencyStamp = "c0345cc1-870a-4ed7-9b58-33503bc3f5e2",
-                            DateOfBirth = new DateOnly(1995, 1, 14),
+                            ConcurrencyStamp = "36194ca4-d13b-4b1c-aee4-28342476496e",
                             Email = "hr@localhost.com",
                             EmailConfirmed = true,
-                            FirstName = "Hr",
-                            LastName = "Hr",
                             LockoutEnabled = false,
                             NormalizedEmail = "HR@LOCALHOST.COM",
                             NormalizedUserName = "HR@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGJIGzs7yhNRr+gm3+RQZaVrb6EgJJpo12Qk1MqtZ3GBjsre90U9pAGJsD1OatYk0Q==",
+                            PasswordHash = "AQAAAAIAAYagAAAAENh8KQgRTk9h9F7St+UiP+scJaGa7eCpQapkOJXqqBEdYQtdifmId8OhLUq23UrSIA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "a9f73efb-268a-4f43-9012-ac8fbd57e8c5",
+                            SecurityStamp = "3ba7a282-fa40-4a72-9e31-ba199b33a831",
                             TwoFactorEnabled = false,
                             UserName = "hr@localhost.com"
+                        },
+                        new
+                        {
+                            Id = "e19c3b4a-b3ec-49a8-9790-5d15d9b8de96",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "9ccd66ce-08b8-4c94-abe4-000509593713",
+                            Email = "marko.stoiljkovic@localhost.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "MARKO.STOILJKOVIC@LOCALHOST.COM",
+                            NormalizedUserName = "MARKO.STOILJKOVIC@LOCALHOST.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEE5ZHj1XzdPXoj1b5r5GLZacNQ66/kGkr5dS2nR28A+8uIiymvbz2f9bK/D7pLYkvQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "2c3f9b80-ac49-498b-be63-16ed81d23ce4",
+                            TwoFactorEnabled = false,
+                            UserName = "marko.stoiljkovic@localhost.com"
+                        },
+                        new
+                        {
+                            Id = "985fe5c1-deb8-4082-863a-840037477bc5",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "60134e52-1978-4106-9f8f-3445d881053d",
+                            Email = "sara.dimitrijevic@localhost.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "SARA.DIMITRIJEVIC@LOCALHOST.COM",
+                            NormalizedUserName = "SARA.DIMITRIJEVIC@LOCALHOST.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFSR5oBgIHY5mdhhOBbSzJ/l9qYCffwgljWCe4ZMStvB6V0Nir0g0w871NegHkbqtg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "6657fabf-3cb8-43f9-9e80-0ce268a3819a",
+                            TwoFactorEnabled = false,
+                            UserName = "sara.dimitrijevic@localhost.com"
+                        },
+                        new
+                        {
+                            Id = "88ea1648-4810-4e04-81f9-cfdff02bbd22",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "adbb6c0a-e464-4527-ad10-1f7b334c845d",
+                            Email = "petar.markovic@localhost.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "PETAR.MARKOVIC@LOCALHOST.COM",
+                            NormalizedUserName = "PETAR.MARKOVIC@LOCALHOST.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFUz+a0eqwBBRj45qzrCE6sYFTPHe/1NbhP4eDypFYjIoA2QZnXvl0Mfl++zrj0fXQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "2ce2d770-50a0-401c-b822-7eb115ffb530",
+                            TwoFactorEnabled = false,
+                            UserName = "petar.markovic@localhost.com"
                         });
                 });
 
@@ -549,6 +360,21 @@ namespace Core.Infrastructure.Migrations.IdentityDb
                         {
                             UserId = "48a3b0de-d24d-4879-a528-ddaf38580270",
                             RoleId = "ebc687e2-03df-4448-b79e-32e3e39de6bc"
+                        },
+                        new
+                        {
+                            UserId = "e19c3b4a-b3ec-49a8-9790-5d15d9b8de96",
+                            RoleId = "dd70f100-6753-494a-9382-1dd5ef51d4b6"
+                        },
+                        new
+                        {
+                            UserId = "985fe5c1-deb8-4082-863a-840037477bc5",
+                            RoleId = "dd70f100-6753-494a-9382-1dd5ef51d4b6"
+                        },
+                        new
+                        {
+                            UserId = "88ea1648-4810-4e04-81f9-cfdff02bbd22",
+                            RoleId = "dd70f100-6753-494a-9382-1dd5ef51d4b6"
                         });
                 });
 

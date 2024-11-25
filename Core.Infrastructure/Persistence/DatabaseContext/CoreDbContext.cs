@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Core.Infrastructure.Persistence.DatabaseContext;
 
-public class DatabaseContext : DbContext
+public class CoreDbContext : DbContext
 {
-    public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
+    public CoreDbContext(DbContextOptions<CoreDbContext> options) : base(options)
     {
 
     }
@@ -17,14 +17,38 @@ public class DatabaseContext : DbContext
     public DbSet<LeaveRequest> LeaveRequests { get; set; }
     public DbSet<LeaveDistribution> LeaveDistributions { get; set; }
     public DbSet<Candidate> Candidates { get; set; }
+    public DbSet<Company> Companies { get; set; }
+    public DbSet<Team> Teams { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<TeamUser> TeamsUsers{ get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(DatabaseContext).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(CoreDbContext).Assembly);
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<LeaveRequest>()
         .OwnsOne(lr => lr.Duration);
+
+        modelBuilder.Entity<LeaveRequest>()
+                .Property(f => f.RequestStatus)
+                .HasConversion<string>();
+
+        modelBuilder.Entity<Candidate>()
+                .Property(f => f.StackPosition)                
+                .HasConversion<string>();
+
+        modelBuilder.Entity<Candidate>()
+                .Property(f => f.Seniority)
+                .HasConversion<string>();
+
+        modelBuilder.Entity<User>()
+                .Property(f => f.Seniority)
+                .HasConversion<string>();
+
+        modelBuilder.Entity<User>()
+        .Property(f => f.StackPosition)
+        .HasConversion<string>();
 
         modelBuilder.Ignore<IdentityUserLogin<string>>();
         modelBuilder.Ignore<IdentityUserRole<string>>();
@@ -32,6 +56,7 @@ public class DatabaseContext : DbContext
         modelBuilder.Ignore<IdentityUserToken<string>>();
         modelBuilder.Ignore<IdentityUser<string>>();
         modelBuilder.Ignore<ApplicationUser>();
+        modelBuilder.Ignore<IdentityRole>();
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -51,7 +76,7 @@ public class DatabaseContext : DbContext
                     entry.State = EntityState.Modified;
                     break;
             }
-        } 
+        }
 
         return base.SaveChangesAsync(cancellationToken);
     }

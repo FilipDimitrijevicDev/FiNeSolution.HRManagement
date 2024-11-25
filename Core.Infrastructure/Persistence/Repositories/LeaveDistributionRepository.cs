@@ -1,12 +1,13 @@
 ﻿using Core.Application.Common.Interfaces;
 using Core.Domain;
+using Core.Infrastructure.Persistence.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 
 namespace Core.Infrastructure.Persistence.Repositories;
 
 public class LeaveDistributionRepository : GenericRepository<LeaveDistribution>, ILeaveDistributionRepository
 {
-    public LeaveDistributionRepository(DatabaseContext.DatabaseContext dbContext) : base(dbContext)
+    public LeaveDistributionRepository(CoreDbContext dbContext) : base(dbContext)
     {
     }
 

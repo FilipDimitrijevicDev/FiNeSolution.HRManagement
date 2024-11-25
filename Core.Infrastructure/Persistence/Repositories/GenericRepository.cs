@@ -1,13 +1,14 @@
 ﻿using Core.Application.Common.Interfaces;
 using Core.Domain.Common;
+using Core.Infrastructure.Persistence.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 
 namespace Core.Infrastructure.Persistence.Repositories;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
 {
-    protected readonly DatabaseContext.DatabaseContext _dbContext;
-    public GenericRepository(DatabaseContext.DatabaseContext dbContext)
+    protected readonly CoreDbContext _dbContext;
+    public GenericRepository(CoreDbContext dbContext)
     {
         _dbContext = dbContext;
     }

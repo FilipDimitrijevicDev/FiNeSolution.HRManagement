@@ -8,5 +8,6 @@ public class CreateLeaveRequestCommand : IRequest<CreateLeaveRequestCommandResul
     public DateOnly StartDate { get; set; }
     public DateOnly EndDate { get; set; }
     public Guid LeaveTypeUid { get; set; }
-    public string RequestComments { get; set; } = string.Empty;
+    public bool ReserveOnly { get; set; }
+    public string? RequestComments { get; set; } = string.Empty;
 }

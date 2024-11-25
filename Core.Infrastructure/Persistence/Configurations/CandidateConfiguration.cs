@@ -21,7 +21,8 @@ public class CandidateConfiguration : IEntityTypeConfiguration<Candidate>
                    Seniority = Domain.Enums.Seniority.Senior,
                    CVPath = "/uploads/john_doe_cv.pdf",
                    Note = "Candidate shows strong skills in backend development.",
-                   Rating = 4
+                   Rating = 4,
+                   CompanyId = 1,
                },
                new Candidate
                {
@@ -35,7 +36,8 @@ public class CandidateConfiguration : IEntityTypeConfiguration<Candidate>
                    Seniority = Domain.Enums.Seniority.Senior,
                    CVPath = "/uploads/alice_smith_cv.pdf",
                    Note = "Experienced project manager with a strong background in Agile methodologies.",
-                   Rating = 5
+                   Rating = 5,
+                   CompanyId = 1
                },
                new Candidate
                {
@@ -49,7 +51,8 @@ public class CandidateConfiguration : IEntityTypeConfiguration<Candidate>
                    Seniority = Domain.Enums.Seniority.Junior,
                    CVPath = "/uploads/michael_johnson_cv.pdf",
                    Note = "Front-end developer with expertise in React and Vue.js.",
-                   Rating = 3
+                   Rating = 3,
+                   CompanyId = 1
                },
                new Candidate
                {
@@ -63,7 +66,8 @@ public class CandidateConfiguration : IEntityTypeConfiguration<Candidate>
                    Seniority = Domain.Enums.Seniority.Junior,
                    CVPath = "/uploads/emma_williams_cv.pdf",
                    Note = "Full-stack developer with strong skills in Node.js and .NET Core.",
-                   Rating = 4
+                   Rating = 4,
+                   CompanyId = 1
                },
                new Candidate
                {
@@ -77,7 +81,8 @@ public class CandidateConfiguration : IEntityTypeConfiguration<Candidate>
                    Seniority = Domain.Enums.Seniority.Mid,
                    CVPath = "/uploads/david_brown_cv.pdf",
                    Note = "DevOps engineer with experience in CI/CD pipelines and containerization.",
-                   Rating = 5
+                   Rating = 5,
+                   CompanyId = 1
                }
            );
     }

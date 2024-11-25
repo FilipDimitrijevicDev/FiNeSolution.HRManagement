@@ -13,19 +13,22 @@ public class ChangeLeaveRequestApprovalCommandHandler : IRequestHandler<ChangeLe
     private readonly ILeaveTypeRepository _leaveTypeRepository;
     private readonly ILeaveDistributionRepository _leaveDistributionRepository;
     private readonly ILocalizationService _localizationService;
+    private readonly IWorkingDaysService _workingDaysService;
 
     public ChangeLeaveRequestApprovalCommandHandler(
         ILeaveRequestRepository leaveRequestRepository,
         ILeaveTypeRepository leaveTypeRepository,
         ILeaveDistributionRepository leaveDistributionRepository,
         IMapper mapper,
-        ILocalizationService localizationService)
+        ILocalizationService localizationService,
+        IWorkingDaysService workingDaysService)
     {
         _leaveDistributionRepository = leaveDistributionRepository;
         _mapper = mapper;
         _leaveRequestRepository = leaveRequestRepository;
         _leaveTypeRepository = leaveTypeRepository;
         _localizationService = localizationService;
+        _workingDaysService = workingDaysService;
     }
     public async Task<ChangeLeaveRequestApprovalCommandResult> Handle(ChangeLeaveRequestApprovalCommand request, CancellationToken cancellationToken)
     {
@@ -41,27 +44,14 @@ public class ChangeLeaveRequestApprovalCommandHandler : IRequestHandler<ChangeLe
         // if request is approved, get and update the employee's distributions
         if (request.RequestStatus == Domain.Enums.RequestStatus.Approved)
         {
-            int daysRequested = GetWeekdaysCount(leaveRequest.Duration.Start, leaveRequest.Duration.End);
+            int workingDays = _workingDaysService.GetWorkingDaysCount(leaveRequest.Duration.Start, leaveRequest.Duration.End);
 
             var distribution = await _leaveDistributionRepository.GetUserDistributionsByLeaveTypeId(new Guid(leaveRequest.RequestingEmployeeId), leaveRequest.LeaveTypeId);
-            distribution.RemainingDays -= daysRequested;
+            distribution.RemainingDays -= workingDays;
 
             await _leaveDistributionRepository.UpdateAsync(distribution);
         }
 
         return new ChangeLeaveRequestApprovalCommandResult(_localizationService.Translate(TranslationKeyConstants.LEAVEREQUEST_CHANGED_APPROVAL));
-    }
-
-    private static int GetWeekdaysCount(DateOnly start, DateOnly end)
-    {
-        int weekdaysCount = 0;
-        for (DateOnly date = start; date <= end; date = date.AddDays(1))
-        {
-            if (date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday)
-            {
-                weekdaysCount++;
-            }
-        }
-        return weekdaysCount;
     }
 }

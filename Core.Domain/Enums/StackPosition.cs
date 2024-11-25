@@ -4,6 +4,7 @@ namespace Core.Domain.Enums;
 
 public enum StackPosition
 {
+    Unknown = 0,
     [Display(Name = "Frontend Developer")]
     Frontend,
     [Display(Name = "Backend Developer")]
@@ -19,5 +20,9 @@ public enum StackPosition
     [Display(Name = "HR")]
     HR,
     [Display(Name = "System Administrator")]
-    SystemAdministrator
+    SystemAdministrator,
+    [Display(Name = "Support")]
+    Support,
+    [Display(Name = "Project Manager")]
+    ProjectManager,
 }

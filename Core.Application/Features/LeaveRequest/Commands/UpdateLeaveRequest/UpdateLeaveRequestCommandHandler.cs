@@ -36,6 +36,7 @@ public class UpdateLeaveRequestCommandHandler : IRequestHandler<UpdateLeaveReque
         leaveRequest.RequestComments = request.Comments;
         leaveRequest.Duration = duration;
         leaveRequest.LeaveType.Uid = request.LeaveTypeUid;
+        leaveRequest.ReserveOnly = request.ReserveOnly; 
 
         var result = _mapper.Map<Domain.LeaveRequest>(leaveRequest);
 

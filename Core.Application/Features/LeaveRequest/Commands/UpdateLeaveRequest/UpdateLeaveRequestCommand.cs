@@ -8,6 +8,7 @@ public class UpdateLeaveRequestCommand : IRequest<UpdateLeaveRequestCommandResul
     public Guid LeaveTypeUid { get; set; }
     public DateOnly StartDate { get; set; }
     public DateOnly EndDate { get; set; }
-    public string Comments { get; set; }
+    public string? Comments { get; set; }
+    public bool ReserveOnly { get; set; }
     public bool Cancelled { get; set; }
 }

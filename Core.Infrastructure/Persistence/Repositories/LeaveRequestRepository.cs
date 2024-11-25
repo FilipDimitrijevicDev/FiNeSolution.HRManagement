@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using Core.Application.Common.Interfaces;
 using Core.Application.Common.Models;
 using Core.Application.Common.Models.DTOs;
+using Core.Infrastructure.Persistence.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -12,7 +13,7 @@ public class LeaveRequestRepository : GenericRepository<Domain.LeaveRequest>, IL
 {
     private readonly IMapper _mapper;
 
-    public LeaveRequestRepository(DatabaseContext.DatabaseContext dbContext, IMapper mapper) : base(dbContext)
+    public LeaveRequestRepository(CoreDbContext dbContext, IMapper mapper) : base(dbContext)
     {
         _mapper = mapper;
     }

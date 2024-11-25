@@ -11,6 +11,7 @@ using Core.Application.Common.Logging;
 using Core.Infrastructure.Services;
 using Core.Application.Common.Clock;
 using Core.Infrastructure.Common.Clock;
+using Core.Infrastructure.Persistence.DatabaseContext;
 
 namespace Core.Infrastructure.Persistence;
 
@@ -18,7 +19,7 @@ public static class InfrastructureServicesRegistration
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<DatabaseContext.DatabaseContext>(options => {
+        services.AddDbContext<CoreDbContext>(options => {
             options.UseSqlServer(configuration.GetConnectionString("HrDatabaseConnectionString"));
         });
 
@@ -33,6 +34,7 @@ public static class InfrastructureServicesRegistration
         services.AddTransient<IDateTimeProvider, DateTimeProvider>();
 
         services.AddSingleton<ILocalizationService, BaseLocalizationService>();
+        services.AddScoped<IWorkingDaysService, WorkingDaysService>();
 
         services.AddScoped(typeof(ILogger<>), typeof(LoggerAdapter<>));
 

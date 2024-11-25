@@ -34,6 +34,7 @@ public class CancelLeaveRequestCommandHandler : IRequestHandler<CancelLeaveReque
 
         if (leaveRequestEntity.RequestStatus == Domain.Enums.RequestStatus.Approved)
         {
+            // TODO: Check Length in days
             int daysRequested = leaveRequestEntity.Duration.LengthInDays;
             var distribution = await _leaveDistributionRepository.GetUserDistributionsByLeaveTypeId
                                               (new Guid(leaveRequestEntity.RequestingEmployeeId), leaveRequestEntity.LeaveTypeId);

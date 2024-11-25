@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Core.Infrastructure.Migrations.IdentityDb
 {
     /// <inheritdoc />
-    public partial class InitialMigrationIdentity : Migration
+    public partial class IdentityInitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,10 +32,6 @@ namespace Core.Infrastructure.Migrations.IdentityDb
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -54,50 +50,6 @@ namespace Core.Infrastructure.Migrations.IdentityDb
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Candidate",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StackPosition = table.Column<int>(type: "int", nullable: false),
-                    DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false),
-                    Seniority = table.Column<int>(type: "int", nullable: false),
-                    CVPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Rating = table.Column<int>(type: "int", nullable: true),
-                    Uid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Candidate", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "LeaveType",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    DefaultDays = table.Column<int>(type: "int", nullable: false),
-                    RequiresHRApproval = table.Column<bool>(type: "bit", nullable: false),
-                    Uid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LeaveType", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -219,36 +171,16 @@ namespace Core.Infrastructure.Migrations.IdentityDb
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "CompanyName", "ConcurrencyStamp", "DateOfBirth", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "2499bc5a-0f33-4f67-b521-5829679ee7ff", 0, "System", "e049fc8f-ffef-470f-9622-610835b7d0b4", new DateOnly(1995, 1, 14), "user@localhost.com", true, "System", "User", false, null, "USER@LOCALHOST.COM", "USER@LOCALHOST.COM", "AQAAAAIAAYagAAAAEIt4TFDYLGhMXk9b3WnFofTb5BCi7zJ4zFLcXREQnll0HNOGBAfT8FPXSfQQryDmtw==", null, false, "9014f7a6-6007-429b-ae5f-66831c18740d", false, "user@localhost.com" },
-                    { "306627f3-c902-4d48-a6f3-d83db48df2c6", 0, "System", "c0345cc1-870a-4ed7-9b58-33503bc3f5e2", new DateOnly(1995, 1, 14), "hr@localhost.com", true, "Hr", "Hr", false, null, "HR@LOCALHOST.COM", "HR@LOCALHOST.COM", "AQAAAAIAAYagAAAAEGJIGzs7yhNRr+gm3+RQZaVrb6EgJJpo12Qk1MqtZ3GBjsre90U9pAGJsD1OatYk0Q==", null, false, "a9f73efb-268a-4f43-9012-ac8fbd57e8c5", false, "hr@localhost.com" },
-                    { "42df1250-85ef-4683-9046-6f2e5405ee3a", 0, "System", "01133198-250b-4ba9-bf9e-6e65f58b987a", new DateOnly(1995, 1, 14), "admin@localhost.com", true, "System", "Admin", false, null, "ADMIN@LOCALHOST.COM", "ADMIN@LOCALHOST.COM", "AQAAAAIAAYagAAAAEIzlmTaiZXls81f7x+aePMkDL2yDBWuQNoc/nbQxN6/obLZH82cr53CthESaHHosgw==", null, false, "7f7e3680-ed8c-484f-a77a-1624571d0d0f", false, "admin@localhost.com" },
-                    { "48a3b0de-d24d-4879-a528-ddaf38580270", 0, "System", "e21d5737-fced-4aaa-96ed-28f7c931c6db", new DateOnly(1995, 1, 14), "companyadmin@localhost.com", true, "Company", "Admin", false, null, "COMPANYADMIN@LOCALHOST.COM", "COMPANYADMIN@LOCALHOST.COM", "AQAAAAIAAYagAAAAEBrAXDJ8xDY8DETzxlLIXopp4lYeSwGifs/OGHfubczaF0+eSEodh1ws+ff1MplXMg==", null, false, "c8a0a664-e4d3-4334-83ff-75b4a2c82cb4", false, "companyadmin@localhost.com" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Candidate",
-                columns: new[] { "Id", "CVPath", "CreatedDate", "DateOfBirth", "DeletedDate", "Email", "FirstName", "LastName", "Note", "Rating", "Seniority", "StackPosition", "Uid", "UpdatedDate" },
-                values: new object[,]
-                {
-                    { 1, "/uploads/john_doe_cv.pdf", new DateTime(2024, 10, 23, 18, 6, 33, 405, DateTimeKind.Utc).AddTicks(3605), new DateOnly(1990, 5, 15), null, "john.doe@example.com", "John", "Doe", "Candidate shows strong skills in backend development.", 4, 3, 1, new Guid("3402484c-8383-48ff-a35e-ca4df1995a35"), null },
-                    { 2, "/uploads/alice_smith_cv.pdf", new DateTime(2024, 10, 23, 18, 6, 33, 405, DateTimeKind.Utc).AddTicks(3664), new DateOnly(1985, 12, 30), null, "alice.smith@example.com", "Alice", "Smith", "Experienced project manager with a strong background in Agile methodologies.", 5, 3, 2, new Guid("2c7939a3-1a4c-4fe9-9eda-90ffda2009c1"), null },
-                    { 3, "/uploads/michael_johnson_cv.pdf", new DateTime(2024, 10, 23, 18, 6, 33, 405, DateTimeKind.Utc).AddTicks(3681), new DateOnly(1992, 4, 10), null, "michael.johnson@example.com", "Michael", "Johnson", "Front-end developer with expertise in React and Vue.js.", 3, 1, 0, new Guid("5d65be7b-c223-48c2-a9d4-49e140def2b6"), null },
-                    { 4, "/uploads/emma_williams_cv.pdf", new DateTime(2024, 10, 23, 18, 6, 33, 405, DateTimeKind.Utc).AddTicks(3686), new DateOnly(1988, 8, 25), null, "emma.williams@example.com", "Emma", "Williams", "Full-stack developer with strong skills in Node.js and .NET Core.", 4, 1, 2, new Guid("eb619ca0-0cc3-46ee-b52a-faa88b9f6b17"), null },
-                    { 5, "/uploads/david_brown_cv.pdf", new DateTime(2024, 10, 23, 18, 6, 33, 405, DateTimeKind.Utc).AddTicks(3700), new DateOnly(1995, 11, 15), null, "david.brown@example.com", "David", "Brown", "DevOps engineer with experience in CI/CD pipelines and containerization.", 5, 2, 4, new Guid("81d41adc-6b3f-4b4b-a1fd-cef466b0f8e1"), null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "LeaveType",
-                columns: new[] { "Id", "CreatedDate", "DefaultDays", "DeletedDate", "Name", "RequiresHRApproval", "Uid", "UpdatedDate" },
-                values: new object[,]
-                {
-                    { 1, new DateTime(2024, 10, 23, 20, 6, 33, 406, DateTimeKind.Local).AddTicks(4173), 21, null, "Vacation", true, new Guid("c13d5926-2d3d-4f95-a90e-728914094c9a"), null },
-                    { 2, new DateTime(2024, 10, 23, 20, 6, 33, 406, DateTimeKind.Local).AddTicks(4334), 15, null, "Old Vacation", true, new Guid("c9edbebf-6ece-4c95-85c5-dc4324fb624e"), null },
-                    { 4, new DateTime(2024, 10, 23, 20, 6, 33, 406, DateTimeKind.Local).AddTicks(4337), 15, null, "Remote Work", true, new Guid("2c4fb57a-8fc6-42c7-9000-f0d827f273a0"), null },
-                    { 5, new DateTime(2024, 10, 23, 20, 6, 33, 406, DateTimeKind.Local).AddTicks(4339), 365, null, "Sick Leave", false, new Guid("58d21e95-9478-4732-a973-3ab477500818"), null }
+                    { "2499bc5a-0f33-4f67-b521-5829679ee7ff", 0, "512cf4b6-4b5f-4bb7-9ab4-ee719786fd8f", "filip.dimitrijevic@localhost.com", true, false, null, "FILIP.DIMITRIJEVIC@LOCALHOST.COM", "FILIP.DIMITRIJEVIC@LOCALHOST.COM", "AQAAAAIAAYagAAAAEApcdI06Zv75TOdd5DSjgd/P4rjVIP/MnQJlnBGHwLfxoPiJ4kCA4myxl3vNPPdvoA==", null, false, "452fc2eb-c0ba-419d-9995-6aed57a38b55", false, "filip.dimitrijevic@localhost.com" },
+                    { "306627f3-c902-4d48-a6f3-d83db48df2c6", 0, "36194ca4-d13b-4b1c-aee4-28342476496e", "hr@localhost.com", true, false, null, "HR@LOCALHOST.COM", "HR@LOCALHOST.COM", "AQAAAAIAAYagAAAAENh8KQgRTk9h9F7St+UiP+scJaGa7eCpQapkOJXqqBEdYQtdifmId8OhLUq23UrSIA==", null, false, "3ba7a282-fa40-4a72-9e31-ba199b33a831", false, "hr@localhost.com" },
+                    { "42df1250-85ef-4683-9046-6f2e5405ee3a", 0, "e4e058bc-4223-45ee-9982-be0786bca5d2", "admin@localhost.com", true, false, null, "ADMIN@LOCALHOST.COM", "ADMIN@LOCALHOST.COM", "AQAAAAIAAYagAAAAED+YZuc/3H4sib4v1ITXTs8j+dXbhiakkJgEvaChASaHawCb0s1YUZdOUNLw98Kf+Q==", null, false, "b296f64e-bb37-4b00-aefd-c7fbf310c0e6", false, "admin@localhost.com" },
+                    { "48a3b0de-d24d-4879-a528-ddaf38580270", 0, "bfb9a6a0-ebeb-4132-81f4-1a367df4c5de", "naissuscompanyadmin@localhost.com", true, false, null, "NAISSUSCOMPANYADMIN@LOCALHOST.COM", "NAISSUSCOMPANYADMIN@LOCALHOST.COM", "AQAAAAIAAYagAAAAEN63iXou6lRrv9XzbguIsI1SpgyEBe3wJU6W10bIJD6uBgBeR8l0tq5N0P4OC9OSnw==", null, false, "27ef1998-f42b-48d8-b8c4-a47ee2aff8ba", false, "naissuscompanyadmin@localhost.com" },
+                    { "88ea1648-4810-4e04-81f9-cfdff02bbd22", 0, "adbb6c0a-e464-4527-ad10-1f7b334c845d", "petar.markovic@localhost.com", true, false, null, "PETAR.MARKOVIC@LOCALHOST.COM", "PETAR.MARKOVIC@LOCALHOST.COM", "AQAAAAIAAYagAAAAEFUz+a0eqwBBRj45qzrCE6sYFTPHe/1NbhP4eDypFYjIoA2QZnXvl0Mfl++zrj0fXQ==", null, false, "2ce2d770-50a0-401c-b822-7eb115ffb530", false, "petar.markovic@localhost.com" },
+                    { "985fe5c1-deb8-4082-863a-840037477bc5", 0, "60134e52-1978-4106-9f8f-3445d881053d", "sara.dimitrijevic@localhost.com", true, false, null, "SARA.DIMITRIJEVIC@LOCALHOST.COM", "SARA.DIMITRIJEVIC@LOCALHOST.COM", "AQAAAAIAAYagAAAAEFSR5oBgIHY5mdhhOBbSzJ/l9qYCffwgljWCe4ZMStvB6V0Nir0g0w871NegHkbqtg==", null, false, "6657fabf-3cb8-43f9-9e80-0ce268a3819a", false, "sara.dimitrijevic@localhost.com" },
+                    { "e19c3b4a-b3ec-49a8-9790-5d15d9b8de96", 0, "9ccd66ce-08b8-4c94-abe4-000509593713", "marko.stoiljkovic@localhost.com", true, false, null, "MARKO.STOILJKOVIC@LOCALHOST.COM", "MARKO.STOILJKOVIC@LOCALHOST.COM", "AQAAAAIAAYagAAAAEE5ZHj1XzdPXoj1b5r5GLZacNQ66/kGkr5dS2nR28A+8uIiymvbz2f9bK/D7pLYkvQ==", null, false, "2c3f9b80-ac49-498b-be63-16ed81d23ce4", false, "marko.stoiljkovic@localhost.com" }
                 });
 
             migrationBuilder.InsertData(
@@ -259,7 +191,10 @@ namespace Core.Infrastructure.Migrations.IdentityDb
                     { "dd70f100-6753-494a-9382-1dd5ef51d4b6", "2499bc5a-0f33-4f67-b521-5829679ee7ff" },
                     { "2ed7c2e3-d4ad-4222-9439-1700379ea772", "306627f3-c902-4d48-a6f3-d83db48df2c6" },
                     { "995d5439-2b54-458a-b08d-e0f289255a96", "42df1250-85ef-4683-9046-6f2e5405ee3a" },
-                    { "ebc687e2-03df-4448-b79e-32e3e39de6bc", "48a3b0de-d24d-4879-a528-ddaf38580270" }
+                    { "ebc687e2-03df-4448-b79e-32e3e39de6bc", "48a3b0de-d24d-4879-a528-ddaf38580270" },
+                    { "dd70f100-6753-494a-9382-1dd5ef51d4b6", "88ea1648-4810-4e04-81f9-cfdff02bbd22" },
+                    { "dd70f100-6753-494a-9382-1dd5ef51d4b6", "985fe5c1-deb8-4082-863a-840037477bc5" },
+                    { "dd70f100-6753-494a-9382-1dd5ef51d4b6", "e19c3b4a-b3ec-49a8-9790-5d15d9b8de96" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -319,12 +254,6 @@ namespace Core.Infrastructure.Migrations.IdentityDb
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
-
-            migrationBuilder.DropTable(
-                name: "Candidate");
-
-            migrationBuilder.DropTable(
-                name: "LeaveType");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

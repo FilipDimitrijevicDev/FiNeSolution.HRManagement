@@ -23,6 +23,7 @@ public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveReque
     private readonly IEmailSender _emailSender;
     private readonly ILocalizationService _localizationService;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IWorkingDaysService _workingDaysService;
     private readonly ILogger<CreateLeaveRequestCommandHandler> _logger;
 
     public CreateLeaveRequestCommandHandler(
@@ -34,6 +35,7 @@ public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveReque
         IEmailSender emailSender,
         ILocalizationService localizationService,
         IHttpContextAccessor httpContextAccessor,
+        IWorkingDaysService workingDaysService,
         ILogger<CreateLeaveRequestCommandHandler> logger)
     {
         _leaveDistributionRepository = leaveDistributionRepository;
@@ -44,6 +46,7 @@ public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveReque
         _emailSender = emailSender;
         _localizationService = localizationService;
         _httpContextAccessor = httpContextAccessor;
+        _workingDaysService = workingDaysService;
         _logger = logger;
     }
     public async Task<CreateLeaveRequestCommandResult> Handle(CreateLeaveRequestCommand request, CancellationToken cancellationToken)
@@ -66,6 +69,8 @@ public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveReque
 
         var duration = DateRange.Create(request.StartDate, request.EndDate);
 
+        duration.LengthInDays = _workingDaysService.GetWorkingDaysCount(request.StartDate, request.EndDate);
+
         if (duration.LengthInDays > distribution.RemainingDays)
         {            
             throw new BadRequestException("You do not have enough available days for this type of leave.");
@@ -77,7 +82,7 @@ public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveReque
             Duration = duration,
             LeaveTypeId = distribution.LeaveTypeId,
             RequestComments = request.RequestComments,
-            RequestStatus = Domain.Enums.RequestStatus.Pending
+            RequestStatus = request.ReserveOnly == false ? Domain.Enums.RequestStatus.Pending : Domain.Enums.RequestStatus.Reserved,
         };
 
         var leaveRequestEntity = _mapper.Map<Domain.LeaveRequest>(leaveRequest);

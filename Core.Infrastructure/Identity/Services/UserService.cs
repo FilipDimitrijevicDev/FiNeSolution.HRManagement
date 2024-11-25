@@ -27,8 +27,8 @@ public class UserService : IUserService
         {
             Email = employee.Email,
             Id = employee.Id,
-            Firstname = employee.FirstName,
-            Lastname = employee.LastName
+            //Firstname = employee.FirstName,
+            //Lastname = employee.LastName
         };
     }
 
@@ -39,8 +39,8 @@ public class UserService : IUserService
         {
             Id = q.Id,
             Email = q.Email,
-            Firstname = q.FirstName,
-            Lastname = q.LastName
+            //Firstname = q.FirstName,
+            //Lastname = q.LastName
         }).ToList();
     }
 }

@@ -4,6 +4,7 @@ namespace Core.Domain.Enums;
 
 public enum Seniority
 {
+    Unknown = 0,
     [Display(Name = "Internship")]
     Intern,
     [Display(Name = "Junior Developer")]

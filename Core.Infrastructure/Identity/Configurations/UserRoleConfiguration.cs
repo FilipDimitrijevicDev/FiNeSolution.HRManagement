@@ -28,6 +28,21 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<IdentityUserRole<s
             {
                 RoleId = "ebc687e2-03df-4448-b79e-32e3e39de6bc",
                 UserId = "48a3b0de-d24d-4879-a528-ddaf38580270"
+            },
+            new IdentityUserRole<string>
+            {
+                RoleId = "dd70f100-6753-494a-9382-1dd5ef51d4b6",
+                UserId = "e19c3b4a-b3ec-49a8-9790-5d15d9b8de96"
+            },
+            new IdentityUserRole<string>
+            {
+                RoleId = "dd70f100-6753-494a-9382-1dd5ef51d4b6",
+                UserId = "985fe5c1-deb8-4082-863a-840037477bc5"
+            },
+            new IdentityUserRole<string>
+            {
+                RoleId = "dd70f100-6753-494a-9382-1dd5ef51d4b6",
+                UserId = "88ea1648-4810-4e04-81f9-cfdff02bbd22"
             }
         );
     }
