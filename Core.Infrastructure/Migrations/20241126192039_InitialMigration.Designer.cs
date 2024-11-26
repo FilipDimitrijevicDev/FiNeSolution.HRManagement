@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Core.Infrastructure.Migrations
 {
     [DbContext(typeof(CoreDbContext))]
-    [Migration("20241125231325_InitialMigration")]
+    [Migration("20241126192039_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -35,6 +35,9 @@ namespace Core.Infrastructure.Migrations
 
                     b.Property<string>("CVPath")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -60,6 +63,9 @@ namespace Core.Infrastructure.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("Rating")
                         .HasColumnType("int");
 
@@ -79,6 +85,8 @@ namespace Core.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
                     b.ToTable("Candidates");
 
                     b.HasData(
@@ -86,7 +94,8 @@ namespace Core.Infrastructure.Migrations
                         {
                             Id = 1,
                             CVPath = "/uploads/john_doe_cv.pdf",
-                            CreatedDate = new DateTime(2024, 11, 25, 23, 13, 25, 393, DateTimeKind.Utc).AddTicks(6174),
+                            CompanyId = 1,
+                            CreatedDate = new DateTime(2024, 11, 26, 19, 20, 39, 225, DateTimeKind.Utc).AddTicks(2539),
                             DateOfBirth = new DateOnly(1990, 5, 15),
                             Email = "john.doe@example.com",
                             FirstName = "John",
@@ -95,13 +104,14 @@ namespace Core.Infrastructure.Migrations
                             Rating = 4,
                             Seniority = "Senior",
                             StackPosition = "Backend",
-                            Uid = new Guid("5d4ea7d7-e413-4238-988e-463f00a4803f")
+                            Uid = new Guid("afc65760-c53a-4188-9c37-65461d53977e")
                         },
                         new
                         {
                             Id = 2,
                             CVPath = "/uploads/alice_smith_cv.pdf",
-                            CreatedDate = new DateTime(2024, 11, 25, 23, 13, 25, 393, DateTimeKind.Utc).AddTicks(6235),
+                            CompanyId = 1,
+                            CreatedDate = new DateTime(2024, 11, 26, 19, 20, 39, 225, DateTimeKind.Utc).AddTicks(2569),
                             DateOfBirth = new DateOnly(1985, 12, 30),
                             Email = "alice.smith@example.com",
                             FirstName = "Alice",
@@ -110,13 +120,14 @@ namespace Core.Infrastructure.Migrations
                             Rating = 5,
                             Seniority = "Senior",
                             StackPosition = "Fullstack",
-                            Uid = new Guid("6a84f814-1a9b-4fed-ac7a-b7417fd51207")
+                            Uid = new Guid("c90cb5c7-10d2-4a24-b485-52c448bf4f46")
                         },
                         new
                         {
                             Id = 3,
                             CVPath = "/uploads/michael_johnson_cv.pdf",
-                            CreatedDate = new DateTime(2024, 11, 25, 23, 13, 25, 393, DateTimeKind.Utc).AddTicks(6247),
+                            CompanyId = 1,
+                            CreatedDate = new DateTime(2024, 11, 26, 19, 20, 39, 225, DateTimeKind.Utc).AddTicks(2570),
                             DateOfBirth = new DateOnly(1992, 4, 10),
                             Email = "michael.johnson@example.com",
                             FirstName = "Michael",
@@ -125,13 +136,14 @@ namespace Core.Infrastructure.Migrations
                             Rating = 3,
                             Seniority = "Junior",
                             StackPosition = "Unknown",
-                            Uid = new Guid("73523c3d-77b6-4241-ae5f-e8368f0d9962")
+                            Uid = new Guid("1d549dd0-4d19-490c-afd7-e3feb2c565f2")
                         },
                         new
                         {
                             Id = 4,
                             CVPath = "/uploads/emma_williams_cv.pdf",
-                            CreatedDate = new DateTime(2024, 11, 25, 23, 13, 25, 393, DateTimeKind.Utc).AddTicks(6252),
+                            CompanyId = 1,
+                            CreatedDate = new DateTime(2024, 11, 26, 19, 20, 39, 225, DateTimeKind.Utc).AddTicks(2574),
                             DateOfBirth = new DateOnly(1988, 8, 25),
                             Email = "emma.williams@example.com",
                             FirstName = "Emma",
@@ -140,13 +152,14 @@ namespace Core.Infrastructure.Migrations
                             Rating = 4,
                             Seniority = "Junior",
                             StackPosition = "Fullstack",
-                            Uid = new Guid("329798eb-c304-4db5-b57e-74e3fa5e84ff")
+                            Uid = new Guid("ca7facd0-23a7-46b7-833e-8c69992fa234")
                         },
                         new
                         {
                             Id = 5,
                             CVPath = "/uploads/david_brown_cv.pdf",
-                            CreatedDate = new DateTime(2024, 11, 25, 23, 13, 25, 393, DateTimeKind.Utc).AddTicks(6254),
+                            CompanyId = 1,
+                            CreatedDate = new DateTime(2024, 11, 26, 19, 20, 39, 225, DateTimeKind.Utc).AddTicks(2576),
                             DateOfBirth = new DateOnly(1995, 11, 15),
                             Email = "david.brown@example.com",
                             FirstName = "David",
@@ -155,7 +168,7 @@ namespace Core.Infrastructure.Migrations
                             Rating = 5,
                             Seniority = "Mid",
                             StackPosition = "DevOps",
-                            Uid = new Guid("ad39ac63-a4de-4618-afd5-b9cdac1af861")
+                            Uid = new Guid("8f80e5fb-51c7-4f7c-ba05-3a4e7aab0d7e")
                         });
                 });
 
@@ -192,7 +205,7 @@ namespace Core.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2024, 11, 26, 0, 13, 25, 393, DateTimeKind.Local).AddTicks(7101),
+                            CreatedDate = new DateTime(2024, 11, 26, 20, 20, 39, 225, DateTimeKind.Local).AddTicks(4066),
                             Name = "Naissus Tech",
                             Uid = new Guid("da4fdc93-facb-45e2-9170-cb94d01c42fb")
                         });
@@ -324,38 +337,38 @@ namespace Core.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2024, 11, 26, 0, 13, 25, 393, DateTimeKind.Local).AddTicks(8622),
+                            CreatedDate = new DateTime(2024, 11, 26, 20, 20, 39, 225, DateTimeKind.Local).AddTicks(5439),
                             DefaultDays = 21,
                             Name = "Vacation",
                             RequiresHRApproval = true,
-                            Uid = new Guid("694cc50e-2d8f-47e3-83e5-1e916856dd29")
+                            Uid = new Guid("3034d942-0fee-467f-a288-d680fce6aa00")
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2024, 11, 26, 0, 13, 25, 393, DateTimeKind.Local).AddTicks(8638),
+                            CreatedDate = new DateTime(2024, 11, 26, 20, 20, 39, 225, DateTimeKind.Local).AddTicks(5454),
                             DefaultDays = 15,
                             Name = "Old Vacation",
                             RequiresHRApproval = true,
-                            Uid = new Guid("e90d0853-e075-401e-ad09-d8fe5786256e")
+                            Uid = new Guid("10ec6094-46a4-4963-8a44-d68c6052048d")
                         },
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2024, 11, 26, 0, 13, 25, 393, DateTimeKind.Local).AddTicks(8641),
+                            CreatedDate = new DateTime(2024, 11, 26, 20, 20, 39, 225, DateTimeKind.Local).AddTicks(5456),
                             DefaultDays = 15,
                             Name = "Remote Work",
                             RequiresHRApproval = true,
-                            Uid = new Guid("cc949ef4-89d4-4f1a-be9b-2858b8692d6f")
+                            Uid = new Guid("54d970f8-bdb4-47bc-b932-3588b80637db")
                         },
                         new
                         {
                             Id = 5,
-                            CreatedDate = new DateTime(2024, 11, 26, 0, 13, 25, 393, DateTimeKind.Local).AddTicks(8642),
+                            CreatedDate = new DateTime(2024, 11, 26, 20, 20, 39, 225, DateTimeKind.Local).AddTicks(5458),
                             DefaultDays = 365,
                             Name = "Sick Leave",
                             RequiresHRApproval = false,
-                            Uid = new Guid("ca1c8bf6-c2c1-429a-a585-74c6ec925c93")
+                            Uid = new Guid("0b70c087-5333-4705-8617-fca6b4851f4a")
                         });
                 });
 
@@ -401,7 +414,7 @@ namespace Core.Infrastructure.Migrations
                         {
                             Id = 1,
                             CompanyId = 1,
-                            CreatedDate = new DateTime(2024, 11, 26, 0, 13, 25, 394, DateTimeKind.Local).AddTicks(269),
+                            CreatedDate = new DateTime(2024, 11, 26, 20, 20, 39, 225, DateTimeKind.Local).AddTicks(7038),
                             LeadUid = new Guid("306627f3-c902-4d48-a6f3-d83db48df2c6"),
                             Name = "GBI",
                             Uid = new Guid("9fe876b5-0429-42e0-a205-1f6d9c2a7cb5")
@@ -410,7 +423,7 @@ namespace Core.Infrastructure.Migrations
                         {
                             Id = 2,
                             CompanyId = 1,
-                            CreatedDate = new DateTime(2024, 11, 26, 0, 13, 25, 394, DateTimeKind.Local).AddTicks(293),
+                            CreatedDate = new DateTime(2024, 11, 26, 20, 20, 39, 225, DateTimeKind.Local).AddTicks(7062),
                             LeadUid = new Guid("985fe5c1-deb8-4082-863a-840037477bc5"),
                             Name = "GOAT",
                             Uid = new Guid("bd7746a3-1385-4d0e-8fb7-3e19a0f360c1")
@@ -419,7 +432,7 @@ namespace Core.Infrastructure.Migrations
                         {
                             Id = 3,
                             CompanyId = 1,
-                            CreatedDate = new DateTime(2024, 11, 26, 0, 13, 25, 394, DateTimeKind.Local).AddTicks(297),
+                            CreatedDate = new DateTime(2024, 11, 26, 20, 20, 39, 225, DateTimeKind.Local).AddTicks(7067),
                             LeadUid = new Guid("00000000-0000-0000-0000-000000000000"),
                             Name = "Support",
                             Uid = new Guid("67f55a17-fc74-4c83-ad93-e52937c2499c")
@@ -460,41 +473,41 @@ namespace Core.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2024, 11, 25, 23, 13, 25, 394, DateTimeKind.Utc).AddTicks(1276),
+                            CreatedDate = new DateTime(2024, 11, 26, 19, 20, 39, 225, DateTimeKind.Utc).AddTicks(7980),
                             TeamUid = new Guid("9fe876b5-0429-42e0-a205-1f6d9c2a7cb5"),
-                            Uid = new Guid("ee4d9f7f-8b33-465a-ad8d-8f040f23a0fa"),
+                            Uid = new Guid("abc93719-bbcf-4a3d-9e79-39703e4f529a"),
                             UserUid = new Guid("2499bc5a-0f33-4f67-b521-5829679ee7ff")
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2024, 11, 25, 23, 13, 25, 394, DateTimeKind.Utc).AddTicks(1293),
+                            CreatedDate = new DateTime(2024, 11, 26, 19, 20, 39, 225, DateTimeKind.Utc).AddTicks(7992),
                             TeamUid = new Guid("9fe876b5-0429-42e0-a205-1f6d9c2a7cb5"),
-                            Uid = new Guid("045b10e3-57e4-49a9-bc39-6be592f2d4ea"),
+                            Uid = new Guid("2b92261b-0ea0-478f-987a-fcc02ab4554a"),
                             UserUid = new Guid("e19c3b4a-b3ec-49a8-9790-5d15d9b8de96")
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2024, 11, 25, 23, 13, 25, 394, DateTimeKind.Utc).AddTicks(1296),
+                            CreatedDate = new DateTime(2024, 11, 26, 19, 20, 39, 225, DateTimeKind.Utc).AddTicks(7995),
                             TeamUid = new Guid("67f55a17-fc74-4c83-ad93-e52937c2499c"),
-                            Uid = new Guid("f3dcfadf-109a-4b7e-83ae-3731080b8b4d"),
+                            Uid = new Guid("8eb7d426-dc9c-4fc5-9685-5409033d926c"),
                             UserUid = new Guid("306627f3-c902-4d48-a6f3-d83db48df2c6")
                         },
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2024, 11, 25, 23, 13, 25, 394, DateTimeKind.Utc).AddTicks(1298),
+                            CreatedDate = new DateTime(2024, 11, 26, 19, 20, 39, 225, DateTimeKind.Utc).AddTicks(7999),
                             TeamUid = new Guid("bd7746a3-1385-4d0e-8fb7-3e19a0f360c1"),
-                            Uid = new Guid("8390152d-cff8-483d-8262-78145c74b2e2"),
+                            Uid = new Guid("21c00174-7f5f-4364-bb02-3c69abb64cbb"),
                             UserUid = new Guid("985fe5c1-deb8-4082-863a-840037477bc5")
                         },
                         new
                         {
                             Id = 5,
-                            CreatedDate = new DateTime(2024, 11, 25, 23, 13, 25, 394, DateTimeKind.Utc).AddTicks(1355),
+                            CreatedDate = new DateTime(2024, 11, 26, 19, 20, 39, 225, DateTimeKind.Utc).AddTicks(8006),
                             TeamUid = new Guid("bd7746a3-1385-4d0e-8fb7-3e19a0f360c1"),
-                            Uid = new Guid("1b0b0630-c245-496b-9dba-651634f5f15c"),
+                            Uid = new Guid("2bc07398-ca94-4274-98a6-33041ea66b19"),
                             UserUid = new Guid("88ea1648-4810-4e04-81f9-cfdff02bbd22")
                         });
                 });
@@ -543,6 +556,9 @@ namespace Core.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateOnly?>("ReligiousHolidayDay")
                         .HasColumnType("date");
 
@@ -574,7 +590,7 @@ namespace Core.Infrastructure.Migrations
                         {
                             Id = 1,
                             CompanyEmail = "admin@localhost.com",
-                            CreatedDate = new DateTime(2024, 11, 25, 23, 13, 25, 394, DateTimeKind.Utc).AddTicks(2098),
+                            CreatedDate = new DateTime(2024, 11, 26, 19, 20, 39, 225, DateTimeKind.Utc).AddTicks(8917),
                             DateOfBirth = new DateOnly(1, 1, 1),
                             DateOfEmployment = new DateOnly(1, 1, 1),
                             FirstName = "System",
@@ -589,7 +605,7 @@ namespace Core.Infrastructure.Migrations
                             Id = 2,
                             CompanyEmail = "naissuscompanyadmin@localhost.com",
                             CompanyId = 1,
-                            CreatedDate = new DateTime(2024, 11, 25, 23, 13, 25, 394, DateTimeKind.Utc).AddTicks(2108),
+                            CreatedDate = new DateTime(2024, 11, 26, 19, 20, 39, 225, DateTimeKind.Utc).AddTicks(8924),
                             DateOfBirth = new DateOnly(1, 1, 1),
                             DateOfEmployment = new DateOnly(1, 1, 1),
                             FirstName = "Company",
@@ -604,13 +620,14 @@ namespace Core.Infrastructure.Migrations
                             Id = 3,
                             CompanyEmail = "filip.dimitrijevic@localhost.com",
                             CompanyId = 1,
-                            CreatedDate = new DateTime(2024, 11, 25, 23, 13, 25, 394, DateTimeKind.Utc).AddTicks(2111),
+                            CreatedDate = new DateTime(2024, 11, 26, 19, 20, 39, 225, DateTimeKind.Utc).AddTicks(8927),
                             DateOfBirth = new DateOnly(1995, 1, 14),
                             DateOfEmployment = new DateOnly(2021, 1, 10),
                             DedicatedHR = new Guid("306627f3-c902-4d48-a6f3-d83db48df2c6"),
                             FirstName = "Filip",
                             IsTeamLead = false,
                             LastName = "Dimitrijevic",
+                            PhoneNumber = "0692509999",
                             ReligiousHolidayDay = new DateOnly(1900, 1, 12),
                             Seniority = "Mid",
                             StackPosition = "Backend",
@@ -622,7 +639,7 @@ namespace Core.Infrastructure.Migrations
                             Id = 4,
                             CompanyEmail = "hr@localhost.com",
                             CompanyId = 1,
-                            CreatedDate = new DateTime(2024, 11, 25, 23, 13, 25, 394, DateTimeKind.Utc).AddTicks(2118),
+                            CreatedDate = new DateTime(2024, 11, 26, 19, 20, 39, 225, DateTimeKind.Utc).AddTicks(8933),
                             DateOfBirth = new DateOnly(1990, 1, 1),
                             DateOfEmployment = new DateOnly(2022, 1, 1),
                             FirstName = "Bojana",
@@ -637,13 +654,14 @@ namespace Core.Infrastructure.Migrations
                             Id = 5,
                             CompanyEmail = "marko.stoiljkovic@localhost.com",
                             CompanyId = 1,
-                            CreatedDate = new DateTime(2024, 11, 25, 23, 13, 25, 394, DateTimeKind.Utc).AddTicks(2120),
+                            CreatedDate = new DateTime(2024, 11, 26, 19, 20, 39, 225, DateTimeKind.Utc).AddTicks(8935),
                             DateOfBirth = new DateOnly(1989, 1, 1),
                             DateOfEmployment = new DateOnly(2015, 1, 1),
                             DedicatedHR = new Guid("306627f3-c902-4d48-a6f3-d83db48df2c6"),
                             FirstName = "Marko",
                             IsTeamLead = true,
                             LastName = "Stoiljkovic",
+                            PhoneNumber = "0638888888",
                             ReligiousHolidayDay = new DateOnly(1900, 1, 12),
                             Seniority = "Lead",
                             StackPosition = "ProjectManager",
@@ -654,13 +672,14 @@ namespace Core.Infrastructure.Migrations
                             Id = 6,
                             CompanyEmail = "sara.dimitrijevic@localhost.com",
                             CompanyId = 1,
-                            CreatedDate = new DateTime(2024, 11, 25, 23, 13, 25, 394, DateTimeKind.Utc).AddTicks(2126),
+                            CreatedDate = new DateTime(2024, 11, 26, 19, 20, 39, 225, DateTimeKind.Utc).AddTicks(8938),
                             DateOfBirth = new DateOnly(1999, 2, 12),
                             DateOfEmployment = new DateOnly(2020, 1, 1),
                             DedicatedHR = new Guid("306627f3-c902-4d48-a6f3-d83db48df2c6"),
                             FirstName = "Sara",
                             IsTeamLead = true,
                             LastName = "Dimitrijevic",
+                            PhoneNumber = "0623333344",
                             ReligiousHolidayDay = new DateOnly(1900, 1, 12),
                             Seniority = "Mid",
                             StackPosition = "ProjectManager",
@@ -671,7 +690,7 @@ namespace Core.Infrastructure.Migrations
                             Id = 7,
                             CompanyEmail = "petar.markovic@localhost.com",
                             CompanyId = 1,
-                            CreatedDate = new DateTime(2024, 11, 25, 23, 13, 25, 394, DateTimeKind.Utc).AddTicks(2129),
+                            CreatedDate = new DateTime(2024, 11, 26, 19, 20, 39, 225, DateTimeKind.Utc).AddTicks(8940),
                             DateOfBirth = new DateOnly(1998, 12, 5),
                             DateOfEmployment = new DateOnly(2021, 1, 1),
                             DedicatedHR = new Guid("306627f3-c902-4d48-a6f3-d83db48df2c6"),
@@ -684,6 +703,15 @@ namespace Core.Infrastructure.Migrations
                             TeamLeadUid = new Guid("985fe5c1-deb8-4082-863a-840037477bc5"),
                             Uid = new Guid("88ea1648-4810-4e04-81f9-cfdff02bbd22")
                         });
+                });
+
+            modelBuilder.Entity("Core.Domain.Candidate", b =>
+                {
+                    b.HasOne("Core.Domain.Company", "Company")
+                        .WithMany("Candidates")
+                        .HasForeignKey("CompanyId");
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("Core.Domain.LeaveDistribution", b =>
@@ -755,6 +783,8 @@ namespace Core.Infrastructure.Migrations
 
             modelBuilder.Entity("Core.Domain.Company", b =>
                 {
+                    b.Navigation("Candidates");
+
                     b.Navigation("Teams");
 
                     b.Navigation("Users");

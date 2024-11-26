@@ -18,4 +18,5 @@ public class User : BaseEntity
     public DateOnly? ReligiousHolidayDay{ get; set; }
     public int? CompanyId { get; set; }
     public virtual Company Company { get; set; }
+    public string? PhoneNumber { get; set; }
 }

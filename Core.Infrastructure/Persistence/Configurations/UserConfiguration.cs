@@ -52,7 +52,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
                  DedicatedHR = Guid.Parse("306627f3-c902-4d48-a6f3-d83db48df2c6"),
                  IsTeamLead = false,
                  TeamLeadUid = Guid.Parse("e19c3b4a-b3ec-49a8-9790-5d15d9b8de96"),
-                 ReligiousHolidayDay = new DateOnly(1900, 1, 12)
+                 ReligiousHolidayDay = new DateOnly(1900, 1, 12),
+                 PhoneNumber = "0692509999"
              },
              new User
              {
@@ -83,7 +84,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
                  CreatedDate = DateTime.UtcNow,
                  DedicatedHR = Guid.Parse("306627f3-c902-4d48-a6f3-d83db48df2c6"),
                  IsTeamLead = true,
-                 ReligiousHolidayDay = new DateOnly(1900, 1, 12)
+                 ReligiousHolidayDay = new DateOnly(1900, 1, 12),
+                 PhoneNumber = "0638888888"
              },
              new User
              {
@@ -100,7 +102,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
                  CreatedDate = DateTime.UtcNow,
                  DedicatedHR = Guid.Parse("306627f3-c902-4d48-a6f3-d83db48df2c6"),
                  IsTeamLead = true,
-                 ReligiousHolidayDay = new DateOnly(1900, 1, 12)
+                 ReligiousHolidayDay = new DateOnly(1900, 1, 12),
+                 PhoneNumber = "0623333344"
              },
              new User
              {

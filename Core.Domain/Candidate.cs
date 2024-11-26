@@ -14,6 +14,7 @@ public class Candidate : BaseEntity
     public string? CVPath { get; set; }
     public string? Note { get; set; }
     public int? Rating { get; set; }
+    public string? PhoneNumber { get; set; }
     public int? CompanyId { get; set; }
     public virtual Company Company { get; set; }
 }
