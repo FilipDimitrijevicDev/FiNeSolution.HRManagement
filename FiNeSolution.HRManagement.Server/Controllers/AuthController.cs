@@ -1,5 +1,7 @@
 ﻿using Core.Application.Common.Identity;
 using Core.Application.Common.Models.Identity;
+using Core.Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers;
@@ -21,9 +23,10 @@ public class AuthController : ControllerBase
         return Ok(await _authenticationService.Login(request));
     }
 
-    [HttpPost("register")]
+    [HttpPost("registerEmployee")]
+    [Authorize(Roles = BaseConstants.NonEmployeeRoles)]
     public async Task<ActionResult<RegistrationResponse>> Register(RegistrationRequest request)
     {
-        return Ok(await _authenticationService.Register(request));
+        return Ok(await _authenticationService.RegisterEmployee(request));
     }
 }
