@@ -14,7 +14,7 @@ public class User : BaseEntity
     public required Seniority Seniority { get; set; }
     public bool IsTeamLead { get; set; }
     public Guid? TeamLeadUid { get; set; }
-    public Guid? DedicatedHR { get; set; }
+    public Guid? AssignedHR { get; set; }
     public DateOnly? ReligiousHolidayDay{ get; set; }
     public int? CompanyId { get; set; }
     public virtual Company Company { get; set; }

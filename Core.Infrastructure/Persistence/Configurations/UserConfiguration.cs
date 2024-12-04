@@ -49,7 +49,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
                  Seniority = Domain.Enums.Seniority.Mid,
                  StackPosition = Domain.Enums.StackPosition.Backend,
                  CreatedDate = DateTime.UtcNow,
-                 DedicatedHR = Guid.Parse("306627f3-c902-4d48-a6f3-d83db48df2c6"),
+                 AssignedHR = Guid.Parse("306627f3-c902-4d48-a6f3-d83db48df2c6"),
                  IsTeamLead = false,
                  TeamLeadUid = Guid.Parse("e19c3b4a-b3ec-49a8-9790-5d15d9b8de96"),
                  ReligiousHolidayDay = new DateOnly(1900, 1, 12),
@@ -82,7 +82,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
                  Seniority = Domain.Enums.Seniority.Lead,
                  StackPosition = Domain.Enums.StackPosition.ProjectManager,
                  CreatedDate = DateTime.UtcNow,
-                 DedicatedHR = Guid.Parse("306627f3-c902-4d48-a6f3-d83db48df2c6"),
+                 AssignedHR = Guid.Parse("306627f3-c902-4d48-a6f3-d83db48df2c6"),
                  IsTeamLead = true,
                  ReligiousHolidayDay = new DateOnly(1900, 1, 12),
                  PhoneNumber = "0638888888"
@@ -100,7 +100,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
                  Seniority = Domain.Enums.Seniority.Mid,
                  StackPosition = Domain.Enums.StackPosition.ProjectManager,
                  CreatedDate = DateTime.UtcNow,
-                 DedicatedHR = Guid.Parse("306627f3-c902-4d48-a6f3-d83db48df2c6"),
+                 AssignedHR = Guid.Parse("306627f3-c902-4d48-a6f3-d83db48df2c6"),
                  IsTeamLead = true,
                  ReligiousHolidayDay = new DateOnly(1900, 1, 12),
                  PhoneNumber = "0623333344"
@@ -118,7 +118,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
                  Seniority = Domain.Enums.Seniority.Senior,
                  StackPosition = Domain.Enums.StackPosition.Backend,
                  CreatedDate = DateTime.UtcNow,
-                 DedicatedHR = Guid.Parse("306627f3-c902-4d48-a6f3-d83db48df2c6"),
+                 AssignedHR = Guid.Parse("306627f3-c902-4d48-a6f3-d83db48df2c6"),
                  IsTeamLead = false,
                  TeamLeadUid = Guid.Parse("985fe5c1-deb8-4082-863a-840037477bc5"),
                  ReligiousHolidayDay = new DateOnly(1900, 1, 12)

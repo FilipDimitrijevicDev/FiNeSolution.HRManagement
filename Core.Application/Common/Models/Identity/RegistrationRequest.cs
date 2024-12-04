@@ -42,7 +42,7 @@ public class RegistrationRequest
 
     public bool IsTeamLead { get; set; }
     public Guid? TeamLeadUid { get; set; }
-    public Guid DedicatedHRUid { get; set; }
+    public Guid AssignedHRUid { get; set; }
     public DateOnly? ReligiousHolidayDay { get; set; }
 
     [Phone]

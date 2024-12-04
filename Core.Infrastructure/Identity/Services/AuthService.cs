@@ -90,7 +90,7 @@ public class AuthService : IAuthService
             Seniority = request.Seniority,
             IsTeamLead = request.IsTeamLead,
             TeamLeadUid = request.TeamLeadUid,
-            DedicatedHR = request.DedicatedHRUid,
+            AssignedHR = request.AssignedHRUid,
             ReligiousHolidayDay = request.ReligiousHolidayDay,
             PhoneNumber = request.PhoneNumber
         };
