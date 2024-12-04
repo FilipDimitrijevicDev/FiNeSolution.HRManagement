@@ -8,7 +8,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Core.Domain.Constants;
+using Core.Domain;
+using Core.Application.Common.Interfaces;
+using Core.Domain.Enums;
 
 namespace Core.Infrastructure.Identity.Services;
 
@@ -17,13 +19,19 @@ public class AuthService : IAuthService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly JwtSettings _jwtSettings;
+    private readonly IUserRepository _userRepository;
+    private readonly ITeamUserRepository _teamUserRepository;
     public AuthService(UserManager<ApplicationUser> userManager,
                       SignInManager<ApplicationUser> signInManager,
-                      IOptions<JwtSettings> jwtSettings)
+                      IOptions<JwtSettings> jwtSettings,
+                      IUserRepository userRepository,
+                      ITeamUserRepository teamUserRepository)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _jwtSettings = jwtSettings.Value;
+        _userRepository = userRepository;
+        _teamUserRepository = teamUserRepository;
     }
 
     public async Task<AuthResponse> Login(AuthRequest request)
@@ -53,24 +61,55 @@ public class AuthService : IAuthService
         return response;
     }
 
-    public async Task<RegistrationResponse> Register(RegistrationRequest request)
+    public async Task<RegistrationResponse> RegisterEmployee(RegistrationRequest request)
     {
+        if (request.UserRole != UserRoleEnum.Employee || request.UserRole != UserRoleEnum.HR)
+        {
+            throw new BadRequestException($"Invalid Role: `{request.UserRole}` for User: {request.UserName}");
+        }
+
         var user = new ApplicationUser
         {
             Email = request.Email,
-            //FirstName = request.FirstName,
-            //LastName = request.LastName,
             UserName = request.UserName,
             EmailConfirmed = true,
-            //CompanyName = request.CompanyName,
-            //DateOfBirth = request.DateOfBirth
         };
 
         var result = await _userManager.CreateAsync(user, request.Password);
 
+        var coreUser = new User
+        {
+            Uid = new Guid(user.Id),
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            CompanyEmail = request.Email,
+            CompanyId = request.CompanyId,
+            DateOfBirth = request.DateOfBirth,
+            DateOfEmployment = request.DateOfEmployment,
+            StackPosition = request.StackPosition,
+            Seniority = request.Seniority,
+            IsTeamLead = request.IsTeamLead,
+            TeamLeadUid = request.TeamLeadUid,
+            DedicatedHR = request.DedicatedHRUid,
+            ReligiousHolidayDay = request.ReligiousHolidayDay,
+            PhoneNumber = request.PhoneNumber
+        };
+
+        var teamUser = new TeamUser
+        {
+            Uid = Guid.NewGuid(),
+            UserUid = new Guid(user.Id),
+            TeamUid = request.TeamUid,
+        };
+
+
         if (result.Succeeded)
         {
-            await _userManager.AddToRoleAsync(user, BaseConstants.RoleEmployee);
+            await _userManager.AddToRoleAsync(user, request.UserRole.ToString());
+
+            await _userRepository.CreateAsync(coreUser);
+            await _teamUserRepository.CreateAsync(teamUser);
+
             return new RegistrationResponse() { UserId = user.Id };
         }
         else

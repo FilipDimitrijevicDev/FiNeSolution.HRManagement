@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Core.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Core.Application.Common.Models.Identity;
 
@@ -23,7 +24,29 @@ public class RegistrationRequest
     public required string Password { get; set; }
 
     [Required]
-    public string CompanyName { get; set; }
+    public int CompanyId{ get; set; }
 
+    public Guid TeamUid { get; set; }
+
+    [Required]
     public DateOnly DateOfBirth { get; set; }
+
+    [Required]
+    public DateOnly DateOfEmployment { get; set; }
+
+    [Required]
+    public StackPosition StackPosition { get; set; }
+
+    [Required]
+    public Seniority Seniority { get; set; }
+
+    public bool IsTeamLead { get; set; }
+    public Guid? TeamLeadUid { get; set; }
+    public Guid DedicatedHRUid { get; set; }
+    public DateOnly? ReligiousHolidayDay { get; set; }
+
+    [Phone]
+    public string? PhoneNumber { get; set; }
+
+    public UserRoleEnum UserRole { get; set; }
 }

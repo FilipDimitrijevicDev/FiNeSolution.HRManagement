@@ -28,6 +28,8 @@ public static class InfrastructureServicesRegistration
         services.AddScoped<ILeaveRequestRepository, LeaveRequestRepository>();
         services.AddScoped<ILeaveDistributionRepository, LeaveDistributionRepository>();
         services.AddScoped<ICandidateRepository, CandidateRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ITeamUserRepository, TeamUserRepository>();
 
         services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
         services.AddTransient<IEmailSender, EmailSender>();
