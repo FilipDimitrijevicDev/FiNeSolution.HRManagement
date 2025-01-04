@@ -12,12 +12,17 @@ public class GetLeaveRequestDetailsQueryHandler : IRequestHandler<GetLeaveReques
     private readonly ILeaveRequestRepository _leaveRequestRepository;
     private readonly IMapper _mapper;
     private readonly IUserService _userService;
+    private readonly IUserRepository _userRepository;
 
-    public GetLeaveRequestDetailsQueryHandler(ILeaveRequestRepository leaveRequestRepository, IMapper mapper, IUserService userService)
+    public GetLeaveRequestDetailsQueryHandler(ILeaveRequestRepository leaveRequestRepository,
+        IMapper mapper,
+        IUserService userService,
+        IUserRepository userRepository)
     {
         _leaveRequestRepository = leaveRequestRepository;
         _mapper = mapper;
         _userService = userService;
+        _userRepository = userRepository;
 
     }
     public async Task<GetLeaveRequestDetailsQueryResult> Handle(GetLeaveRequestDetailsQuery query, CancellationToken cancellationToken)
@@ -30,9 +35,9 @@ public class GetLeaveRequestDetailsQueryHandler : IRequestHandler<GetLeaveReques
 
         var result = _mapper.Map<List<LeaveRequestDetailsDto>>(leaveRequestEntity);
 
-        var employee = await _userService.GetEmployee(leaveRequestEntity.First().RequestingEmployeeId);
+        var user = await _userRepository.GetByUidAsync(Guid.Parse(leaveRequestEntity.First().RequestingEmployeeId));
 
-        result.FirstOrDefault().Employee = employee;
+        result.FirstOrDefault().User = user;
 
         return new GetLeaveRequestDetailsQueryResult(result);
     }

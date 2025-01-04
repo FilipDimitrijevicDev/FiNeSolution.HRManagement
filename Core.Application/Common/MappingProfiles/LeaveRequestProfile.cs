@@ -9,7 +9,9 @@ namespace Core.Application.Common.MappingProfiles
         public LeaveRequestProfile()
         {
             CreateMap<Domain.LeaveRequest, LeaveRequest>().ReverseMap();
-            CreateMap<Domain.LeaveRequest, LeaveRequestListDto>();
+            CreateMap<Domain.LeaveRequest, LeaveRequestListDto>()
+                .ForMember(dest => dest.RequestingEmployeeId,
+                       opt => opt.MapFrom(src => Guid.Parse(src.RequestingEmployeeId))); 
             CreateMap<Domain.LeaveRequest, LeaveRequestDetailsDto>();
         }
     }

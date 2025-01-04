@@ -19,7 +19,7 @@ public class LeaveRequestRepository : GenericRepository<Domain.LeaveRequest>, IL
     }
 
     public async Task<PagedList<LeaveRequestListDto>> GetLeaveRequests(
-        List<string> filteredUsersIds,
+        List<Guid> filteredUserUids,
         string? sortColumn,
         string? sortOrder,
         int pageNumber,
@@ -29,9 +29,10 @@ public class LeaveRequestRepository : GenericRepository<Domain.LeaveRequest>, IL
 
         query = SortAndOrder(sortColumn, sortOrder, query);
 
-        if (filteredUsersIds != null && filteredUsersIds.Count != 0)
+        if (filteredUserUids != null && filteredUserUids.Count != 0)
         {
-            query = query.Where(lr => filteredUsersIds.Contains(lr.RequestingEmployeeId));
+            var stringUserIds = filteredUserUids.Select(id => id.ToString()).ToList();
+            query = query.Where(lr => stringUserIds.Contains(lr.RequestingEmployeeId));
         }
 
         var result = await PagedList<LeaveRequestListDto>.CreateAsync(

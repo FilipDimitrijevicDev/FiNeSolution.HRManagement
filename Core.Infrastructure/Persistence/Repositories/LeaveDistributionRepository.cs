@@ -57,7 +57,6 @@ public class LeaveDistributionRepository : GenericRepository<LeaveDistribution>,
 
     public async Task<LeaveDistribution> GetUserDistributionsByLeaveTypeUid(Guid userUid, Guid leaveTypeUid)
     {
-
         return await _dbContext.LeaveDistributions.SingleOrDefaultAsync(x => x.EmployeeUid == userUid.ToString() && x.LeaveType.Uid == leaveTypeUid);
     }
 }
