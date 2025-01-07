@@ -3,6 +3,7 @@ using Core.Application.Features.LeaveType.Commands.DeleteLeaveType;
 using Core.Application.Features.LeaveType.Commands.UpdateLeaveType;
 using Core.Application.Features.LeaveType.Queries.GetAllLeaveTypes;
 using Core.Application.Features.LeaveType.Queries.GetLeaveTypeDetails;
+using Core.Domain.Constants;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,6 +41,7 @@ public class LeaveTypesController : ControllerBase
     [HttpPost]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
+    [Authorize(Roles = BaseConstants.NonEmployeeRoles)]
     public async Task<ActionResult<CreateLeaveTypeCommandResult>> Post(CreateLeaveTypeCommand leaveTypeCommand)
     {
         var response = await _mediator.Send(leaveTypeCommand);
@@ -49,6 +51,7 @@ public class LeaveTypesController : ControllerBase
 
     [HttpPut("{uid}")]
     [ProducesDefaultResponseType]
+    [Authorize(Roles = BaseConstants.NonEmployeeRoles)]
     public async Task<ActionResult<UpdateLeaveTypeCommandResult>> Put(UpdateLeaveTypeCommand leaveTypeCommand)
     {
         var result = await _mediator.Send(leaveTypeCommand);
@@ -56,6 +59,7 @@ public class LeaveTypesController : ControllerBase
     }
 
     [HttpDelete("{uid}")]
+    [Authorize(Roles = BaseConstants.NonEmployeeRoles)]
     public async Task<ActionResult<DeleteLeaveTypeCommandResult>> Delete(DeleteLeaveTypeCommand leaveTypeCommand)
     {
         var result = await _mediator.Send(leaveTypeCommand);

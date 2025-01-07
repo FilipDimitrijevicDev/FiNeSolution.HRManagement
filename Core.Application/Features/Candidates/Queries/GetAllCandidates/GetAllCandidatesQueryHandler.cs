@@ -25,7 +25,7 @@ public class GetAllCandidatesQueryHandler : IRequestHandler<GetAllCandidatesQuer
 
     public async Task<GetAllCandidatesQueryResult> Handle(GetAllCandidatesQuery query, CancellationToken cancellationToken)
     {
-        int pageNumber = query.PageNumber ?? 0;
+        int pageNumber = query.PageNumber ?? 1;
         int pageSize = query.PageSize ?? 10;
 
         var candidates = await _candidateRepository.GetFilteredAndPaginatedAsync(

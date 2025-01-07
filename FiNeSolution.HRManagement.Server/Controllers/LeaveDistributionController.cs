@@ -63,6 +63,7 @@ public class LeaveDistributionController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesDefaultResponseType]
+    [Authorize(Roles = BaseConstants.NonEmployeeRoles)]
     public async Task<ActionResult> Delete(Guid uid)
     {
         var command = new DeleteLeaveDistributionCommand { Uid = uid };
