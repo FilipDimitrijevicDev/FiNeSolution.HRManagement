@@ -1,8 +1,13 @@
 ﻿using AutoMapper;
 using Core.Application.Common.Exceptions;
+using Core.Application.Common.Identity;
 using Core.Application.Common.Interfaces;
+using Core.Domain;
 using Core.Domain.Constants;
+using Core.Domain.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace Core.Application.Features.LeaveRequest.Commands.ChangeLeaveRequestApproval;
 
@@ -14,6 +19,9 @@ public class ChangeLeaveRequestApprovalCommandHandler : IRequestHandler<ChangeLe
     private readonly ILeaveDistributionRepository _leaveDistributionRepository;
     private readonly ILocalizationService _localizationService;
     private readonly IWorkingDaysService _workingDaysService;
+    private readonly IUserRepository _userRepository;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IUserService _userService;
 
     public ChangeLeaveRequestApprovalCommandHandler(
         ILeaveRequestRepository leaveRequestRepository,
@@ -21,7 +29,10 @@ public class ChangeLeaveRequestApprovalCommandHandler : IRequestHandler<ChangeLe
         ILeaveDistributionRepository leaveDistributionRepository,
         IMapper mapper,
         ILocalizationService localizationService,
-        IWorkingDaysService workingDaysService)
+        IWorkingDaysService workingDaysService,
+        IUserRepository userRepository,
+        IHttpContextAccessor httpContextAccessor,
+        IUserService userService)
     {
         _leaveDistributionRepository = leaveDistributionRepository;
         _mapper = mapper;
@@ -29,6 +40,9 @@ public class ChangeLeaveRequestApprovalCommandHandler : IRequestHandler<ChangeLe
         _leaveTypeRepository = leaveTypeRepository;
         _localizationService = localizationService;
         _workingDaysService = workingDaysService;
+        _userRepository = userRepository;
+        _httpContextAccessor = httpContextAccessor;
+        _userService = userService;
     }
     public async Task<ChangeLeaveRequestApprovalCommandResult> Handle(ChangeLeaveRequestApprovalCommand request, CancellationToken cancellationToken)
     {
@@ -38,20 +52,73 @@ public class ChangeLeaveRequestApprovalCommandHandler : IRequestHandler<ChangeLe
             throw new NotFoundException(nameof(LeaveRequest), request.Uid);
         }
 
-        leaveRequest.RequestStatus = request.RequestStatus;
+        // Get User from LR and check if is TL
+        var user = await _userRepository.GetByUidAsync(Guid.Parse(leaveRequest.RequestingEmployeeId));
+        if (user is null)
+        {
+            throw new NotFoundException(nameof(user), leaveRequest.RequestingEmployeeId);
+        }
+
+        ProcessLeaveRequestApproval(request, leaveRequest, user);
+
         await _leaveRequestRepository.UpdateAsync(leaveRequest);
 
         // if request is approved, get and update the employee's distributions
-        if (request.RequestStatus == Domain.Enums.RequestStatus.Approved)
+        if (leaveRequest.RequestStatus == RequestStatus.Approved)
         {
             int workingDays = _workingDaysService.GetWorkingDaysCount(leaveRequest.Duration.Start, leaveRequest.Duration.End);
 
-            var distribution = await _leaveDistributionRepository.GetUserDistributionsByLeaveTypeId(new Guid(leaveRequest.RequestingEmployeeId), leaveRequest.LeaveTypeId);
+            var distribution = await _leaveDistributionRepository.GetUserDistributionsByLeaveTypeId(
+                    new Guid(leaveRequest.RequestingEmployeeId),
+                    leaveRequest.LeaveTypeId);
+
             distribution.RemainingDays -= workingDays;
 
             await _leaveDistributionRepository.UpdateAsync(distribution);
         }
 
         return new ChangeLeaveRequestApprovalCommandResult(_localizationService.Translate(TranslationKeyConstants.LEAVEREQUEST_CHANGED_APPROVAL));
+    }
+
+    private void ProcessLeaveRequestApproval(ChangeLeaveRequestApprovalCommand request, Domain.LeaveRequest? leaveRequest, User? user)
+    {
+        var role = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+
+        if (user.IsTeamLead && role == BaseConstants.RoleHR)
+        {
+            leaveRequest.RequestStatus = request.RequestStatus;
+        }
+        else
+        {
+            if (request.RequestStatus == RequestStatus.Approved &&
+                role == BaseConstants.RoleHR &&
+                leaveRequest.RequestStatus != RequestStatus.Rejected)
+            {
+                leaveRequest.RequestStatus = leaveRequest.RequestStatus == RequestStatus.Pending ?
+                    RequestStatus.HalfApproved :
+                    RequestStatus.Approved;
+            }
+            else if (role == BaseConstants.RoleHR &&
+                    leaveRequest.RequestStatus != RequestStatus.Rejected)
+            {
+                leaveRequest.RequestStatus = request.RequestStatus;
+            }
+
+            // Here, we check if the request is for a Team Leader assigned to that user
+            if (request.RequestStatus == RequestStatus.Approved &&
+                role == BaseConstants.RoleEmployee &&
+                user.TeamLeadUid == Guid.Parse(_userService.UserId) &&
+                leaveRequest.RequestStatus != RequestStatus.Rejected)
+            {
+                leaveRequest.RequestStatus = leaveRequest.RequestStatus == RequestStatus.Pending ?
+                    RequestStatus.HalfApproved :
+                    RequestStatus.Approved;
+            }
+            else if (user.TeamLeadUid == Guid.Parse(_userService.UserId) &&
+                    leaveRequest.RequestStatus != RequestStatus.Rejected)
+            {
+                leaveRequest.RequestStatus = request.RequestStatus;
+            }
+        }
     }
 }
