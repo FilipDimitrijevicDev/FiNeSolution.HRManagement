@@ -5,8 +5,6 @@ using Core.Application.Common.Models.DTOs;
 using Core.Application.Common.Models;
 using Core.Domain.Constants;
 using MediatR;
-using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 
 namespace Core.Application.Features.LeaveRequest.Queries.GetLeaveRequests;
 
@@ -16,24 +14,21 @@ public class GetLeaveRequestsQueryHandler : IRequestHandler<GetLeaveRequestsQuer
     private readonly IMapper _mapper;
     private readonly IUserService _userService;
     private readonly IUserRepository _userRepository;
-    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public GetLeaveRequestsQueryHandler(
         ILeaveRequestRepository leaveRequestRepository,
         IMapper mapper,
         IUserService userService,
-        IUserRepository userRepository,
-        IHttpContextAccessor httpContextAccessor)
+        IUserRepository userRepository)
     {
         _leaveRequestRepository = leaveRequestRepository;
         _mapper = mapper;
         _userService = userService;
         _userRepository = userRepository;
-        _httpContextAccessor = httpContextAccessor;
     }
     public async Task<GetLeaveRequestsQueryResult> Handle(GetLeaveRequestsQuery query, CancellationToken cancellationToken)
     {
-        var role = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+        var role = _userService.Role;
 
         int pageNumber = query.PageNumber ?? 1;
         int pageSize = query.PageSize ?? 10;

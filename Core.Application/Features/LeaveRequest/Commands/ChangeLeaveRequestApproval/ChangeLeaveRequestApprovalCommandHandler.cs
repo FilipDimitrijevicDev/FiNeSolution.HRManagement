@@ -2,6 +2,7 @@
 using Core.Application.Common.Exceptions;
 using Core.Application.Common.Identity;
 using Core.Application.Common.Interfaces;
+using Core.Application.Common.Logging;
 using Core.Domain;
 using Core.Domain.Constants;
 using Core.Domain.Enums;
@@ -19,6 +20,7 @@ public class ChangeLeaveRequestApprovalCommandHandler : IRequestHandler<ChangeLe
     private readonly IWorkingDaysService _workingDaysService;
     private readonly IUserRepository _userRepository;
     private readonly IUserService _userService;
+    private readonly ILogger<ChangeLeaveRequestApprovalCommandHandler> _logger;
 
     public ChangeLeaveRequestApprovalCommandHandler(
         ILeaveRequestRepository leaveRequestRepository,
@@ -28,7 +30,8 @@ public class ChangeLeaveRequestApprovalCommandHandler : IRequestHandler<ChangeLe
         ILocalizationService localizationService,
         IWorkingDaysService workingDaysService,
         IUserRepository userRepository,
-        IUserService userService)
+        IUserService userService,
+        ILogger<ChangeLeaveRequestApprovalCommandHandler> logger)
     {
         _leaveDistributionRepository = leaveDistributionRepository;
         _mapper = mapper;
@@ -38,12 +41,14 @@ public class ChangeLeaveRequestApprovalCommandHandler : IRequestHandler<ChangeLe
         _workingDaysService = workingDaysService;
         _userRepository = userRepository;
         _userService = userService;
+        _logger = logger;
     }
     public async Task<ChangeLeaveRequestApprovalCommandResult> Handle(ChangeLeaveRequestApprovalCommand request, CancellationToken cancellationToken)
     {
         var leaveRequest = await _leaveRequestRepository.GetByUidAsync(request.Uid);
         if (leaveRequest is null)
         {
+            _logger.LogError("Leave request with UID '{Uid}' not found.", request.Uid);
             throw new NotFoundException(nameof(LeaveRequest), request.Uid);
         }
 
@@ -51,6 +56,7 @@ public class ChangeLeaveRequestApprovalCommandHandler : IRequestHandler<ChangeLe
         var user = await _userRepository.GetByUidAsync(Guid.Parse(leaveRequest.RequestingEmployeeId));
         if (user is null)
         {
+            _logger.LogError("User with UID '{Uid}' not found.", user.Uid);
             throw new NotFoundException(nameof(user), leaveRequest.RequestingEmployeeId);
         }
 
@@ -64,8 +70,14 @@ public class ChangeLeaveRequestApprovalCommandHandler : IRequestHandler<ChangeLe
             int workingDays = _workingDaysService.GetWorkingDaysCount(leaveRequest.Duration.Start, leaveRequest.Duration.End);
 
             var distribution = await _leaveDistributionRepository.GetUserDistributionsByLeaveTypeId(
-                    new Guid(leaveRequest.RequestingEmployeeId),
-                    leaveRequest.LeaveTypeId);
+                                new Guid(leaveRequest.RequestingEmployeeId),
+                                leaveRequest.LeaveTypeId);
+
+            if (workingDays > distribution.RemainingDays)
+            {
+                _logger.LogWarning("Not have enough available days for this type of leave: '{distribution.LeaveType.Name}");
+                throw new BadRequestException("Not have enough available days for this type of leave.");
+            }
 
             distribution.RemainingDays -= workingDays;
 
@@ -81,6 +93,7 @@ public class ChangeLeaveRequestApprovalCommandHandler : IRequestHandler<ChangeLe
 
         if (leaveRequest == null || user == null || string.IsNullOrEmpty(role))
         {
+            _logger.LogError("Wrong parameters for LeaveRequestApproval : LeaveRequest {leaveRequest}, or Role is wrong: {Role}", leaveRequest, role);
             throw new ArgumentNullException("Invalid input parameters");
         }
 

@@ -31,6 +31,7 @@ public class TranslationKeyConstants
     public const string LEAVEREQUEST_CREATED = "leaverequest_created";
     public const string LEAVEREQUEST_DELETED = "leaverequest_deleted";
     public const string LEAVEREQUEST_UPDATED = "leaverequest_updated";
+    public const string LEAVEREQUEST_CONFIRMED = "leaverequest_confirmed";
 
     #endregion
 }

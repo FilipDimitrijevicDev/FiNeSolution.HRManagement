@@ -7,9 +7,7 @@ using Core.Application.Common.Logging;
 using Core.Domain.Common;
 using Core.Domain.Constants;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
 
 namespace Core.Application.Features.LeaveRequest.Commands.CreateLeaveRequest;
 
@@ -22,7 +20,6 @@ public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveReque
     private readonly IUserService _userService;
     private readonly IEmailSender _emailSender;
     private readonly ILocalizationService _localizationService;
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IWorkingDaysService _workingDaysService;
     private readonly ILogger<CreateLeaveRequestCommandHandler> _logger;
 
@@ -34,7 +31,6 @@ public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveReque
         IUserService userService,
         IEmailSender emailSender,
         ILocalizationService localizationService,
-        IHttpContextAccessor httpContextAccessor,
         IWorkingDaysService workingDaysService,
         ILogger<CreateLeaveRequestCommandHandler> logger)
     {
@@ -45,13 +41,12 @@ public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveReque
         _leaveRequestRepository = leaveRequestRepository;
         _emailSender = emailSender;
         _localizationService = localizationService;
-        _httpContextAccessor = httpContextAccessor;
         _workingDaysService = workingDaysService;
         _logger = logger;
     }
     public async Task<CreateLeaveRequestCommandResult> Handle(CreateLeaveRequestCommand request, CancellationToken cancellationToken)
     {
-        var role = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+        var role = _userService.Role;
 
         var employeeId = role == BaseConstants.RoleEmployee ? _userService.UserId : request.EmployeeUid.ToString();
         if (!Guid.TryParse(employeeId, out var employeeGuid))
@@ -83,6 +78,7 @@ public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveReque
             LeaveTypeId = distribution.LeaveTypeId,
             RequestComments = request.RequestComments,
             RequestStatus = request.ReserveOnly == false ? Domain.Enums.RequestStatus.Pending : Domain.Enums.RequestStatus.Reserved,
+            ReserveOnly = request.ReserveOnly
         };
 
         var leaveRequestEntity = _mapper.Map<Domain.LeaveRequest>(leaveRequest);

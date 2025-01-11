@@ -28,22 +28,24 @@ public class CancelLeaveRequestCommandHandler : IRequestHandler<CancelLeaveReque
             throw new NotFoundException(nameof(LeaveRequest), request.Uid);
         }
 
+        bool wasApproved = leaveRequestEntity.RequestStatus == Domain.Enums.RequestStatus.Approved;
+
         leaveRequestEntity.RequestStatus = Domain.Enums.RequestStatus.Cancelled;
         
         await _leaveRequestRepository.UpdateAsync(leaveRequestEntity);
 
-        if (leaveRequestEntity.RequestStatus == Domain.Enums.RequestStatus.Approved)
+        if (wasApproved)
         {
-            // TODO: Check Length in days
-            int daysRequested = leaveRequestEntity.Duration.LengthInDays;
+            int approvedDays = leaveRequestEntity.Duration.LengthInDays;
             var distribution = await _leaveDistributionRepository.GetUserDistributionsByLeaveTypeId
                                               (new Guid(leaveRequestEntity.RequestingEmployeeId), leaveRequestEntity.LeaveTypeId);
             if (distribution == null)
             {
                 // TODO:
+                throw new NotFoundException(nameof(LeaveDistribution), leaveRequestEntity.LeaveTypeId);
             }
 
-            distribution.RemainingDays += daysRequested;
+            distribution.RemainingDays += approvedDays;
 
             await _leaveDistributionRepository.UpdateAsync(distribution);
         }
