@@ -6,8 +6,6 @@ using Core.Domain;
 using Core.Domain.Constants;
 using Core.Domain.Enums;
 using MediatR;
-using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 
 namespace Core.Application.Features.LeaveRequest.Commands.ChangeLeaveRequestApproval;
 
@@ -20,7 +18,6 @@ public class ChangeLeaveRequestApprovalCommandHandler : IRequestHandler<ChangeLe
     private readonly ILocalizationService _localizationService;
     private readonly IWorkingDaysService _workingDaysService;
     private readonly IUserRepository _userRepository;
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IUserService _userService;
 
     public ChangeLeaveRequestApprovalCommandHandler(
@@ -31,7 +28,6 @@ public class ChangeLeaveRequestApprovalCommandHandler : IRequestHandler<ChangeLe
         ILocalizationService localizationService,
         IWorkingDaysService workingDaysService,
         IUserRepository userRepository,
-        IHttpContextAccessor httpContextAccessor,
         IUserService userService)
     {
         _leaveDistributionRepository = leaveDistributionRepository;
@@ -41,7 +37,6 @@ public class ChangeLeaveRequestApprovalCommandHandler : IRequestHandler<ChangeLe
         _localizationService = localizationService;
         _workingDaysService = workingDaysService;
         _userRepository = userRepository;
-        _httpContextAccessor = httpContextAccessor;
         _userService = userService;
     }
     public async Task<ChangeLeaveRequestApprovalCommandResult> Handle(ChangeLeaveRequestApprovalCommand request, CancellationToken cancellationToken)
@@ -82,42 +77,39 @@ public class ChangeLeaveRequestApprovalCommandHandler : IRequestHandler<ChangeLe
 
     private void ProcessLeaveRequestApproval(ChangeLeaveRequestApprovalCommand request, Domain.LeaveRequest? leaveRequest, User? user)
     {
-        var role = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+        var role = _userService.Role;
 
-        if (user.IsTeamLead && role == BaseConstants.RoleHR)
+        if (leaveRequest == null || user == null || string.IsNullOrEmpty(role))
+        {
+            throw new ArgumentNullException("Invalid input parameters");
+        }
+
+        bool isRequestApproved = request.RequestStatus == RequestStatus.Approved;
+        bool isRequestNotRejected = leaveRequest.RequestStatus != RequestStatus.Rejected;
+        bool isPending = leaveRequest.RequestStatus == RequestStatus.Pending;
+        bool isHR = role == BaseConstants.RoleHR || role == BaseConstants.RoleCompanyAdmin;
+        bool isEmployee = role == BaseConstants.RoleEmployee;
+        bool isTeamLeadAssigned = user.TeamLeadUid == Guid.Parse(_userService.UserId);
+
+        if (user.IsTeamLead && isHR)
         {
             leaveRequest.RequestStatus = request.RequestStatus;
+            return;
         }
-        else
-        {
-            if (request.RequestStatus == RequestStatus.Approved &&
-                role == BaseConstants.RoleHR &&
-                leaveRequest.RequestStatus != RequestStatus.Rejected)
-            {
-                leaveRequest.RequestStatus = leaveRequest.RequestStatus == RequestStatus.Pending ?
-                    RequestStatus.HalfApproved :
-                    RequestStatus.Approved;
-            }
-            else if (role == BaseConstants.RoleHR &&
-                    leaveRequest.RequestStatus != RequestStatus.Rejected)
-            {
-                leaveRequest.RequestStatus = request.RequestStatus;
-            }
 
-            // Here, we check if the request is for a Team Leader assigned to that user
-            if (request.RequestStatus == RequestStatus.Approved &&
-                role == BaseConstants.RoleEmployee &&
-                user.TeamLeadUid == Guid.Parse(_userService.UserId) &&
-                leaveRequest.RequestStatus != RequestStatus.Rejected)
+        if (isRequestNotRejected)
+        {
+            if (isHR)
             {
-                leaveRequest.RequestStatus = leaveRequest.RequestStatus == RequestStatus.Pending ?
-                    RequestStatus.HalfApproved :
-                    RequestStatus.Approved;
+                leaveRequest.RequestStatus = isRequestApproved && isPending
+                    ? RequestStatus.HalfApproved
+                    : request.RequestStatus;
             }
-            else if (user.TeamLeadUid == Guid.Parse(_userService.UserId) &&
-                    leaveRequest.RequestStatus != RequestStatus.Rejected)
+            else if (isEmployee && isTeamLeadAssigned)
             {
-                leaveRequest.RequestStatus = request.RequestStatus;
+                leaveRequest.RequestStatus = isRequestApproved && isPending
+                    ? RequestStatus.HalfApproved
+                    : request.RequestStatus;
             }
         }
     }

@@ -20,6 +20,8 @@ public class UserService : IUserService
 
     public string UserId { get => _contextAccessor.HttpContext?.User?.FindFirstValue("uid"); }
 
+    public string Role { get => _contextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value; }
+
     public async Task<Employee> GetEmployee(string userId)
     {
         var employee = await _userManager.FindByIdAsync(userId);
